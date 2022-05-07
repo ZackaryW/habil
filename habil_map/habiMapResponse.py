@@ -9,6 +9,7 @@ class HabiMapResponse:
     x_is_json : bool
     x_has_data : bool
     x_data : typing.Dict = None
+    x_is_list : bool = False
 
     def __init__(self, 
         x_raw : typing.Union[requests.Response, dict],
@@ -54,6 +55,16 @@ class HabiMapResponse:
     
         #
         data_params : dict = json_data["data"]
+
+        if isinstance(data_params, list):
+            return HabiMapResponse(
+                x_raw=raw_response,
+                x_is_json=True,
+                x_has_data=True,
+                x_is_list=True,
+                x_data=data_params,
+            )
+
 
         if only_in_model:
             data_params = {k: v for k, v in data_params.items() if k in ret_params}
