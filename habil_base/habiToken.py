@@ -1,26 +1,8 @@
 from dataclasses import dataclass
-
-class HabiTokenMeta(type):
-    """
-    makes sure all instances are unique by userid
-    """
-
-    _instances = {}
-
-    def __call__(cls, *args, **kwargs):
-        user_id = kwargs.get('user_id', None)
-        if user_id is None:
-            raise ValueError("user_id is required")
-        if user_id in cls._instances:
-            return cls._instances[user_id]
-
-        instance = super().__call__(*args, **kwargs)
-        cls._instances[user_id] = instance
-        return instance
-
+import json 
 
 @dataclass(frozen=True)
-class HabiToken(metaclass=HabiTokenMeta):
+class HabiToken:
     user_id : str
     api_token : str
     app_id : str = None 
@@ -63,13 +45,20 @@ class HabiToken(metaclass=HabiTokenMeta):
         return token
 
     @classmethod
-    def from_dict(cls, dict : dict, set_global : bool = False) -> 'HabiToken':
+    def from_dict(cls, data : dict, set_global : bool = False) -> 'HabiToken':
         return cls.create(
-            user_id=dict['user_id'],
-            api_token=dict['api_token'],
-            app_id=dict['app_id'],
+            user_id=data.get('user_id', None),
+            api_token=data.get('api_token', None),
+            app_id=data.get('app_id', None),
             set_global=set_global
         )
+
+    @classmethod
+    def from_json(cls, jsonpath : str, set_global : bool = False) -> 'HabiToken':
+        data = {}
+        with open(jsonpath, 'r') as f:
+            data = json.load(f)
+        return cls.from_dict(dict=data, set_global=set_global)
 
 
 # ANCHOR global token 
