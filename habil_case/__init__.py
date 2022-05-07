@@ -1,8 +1,15 @@
-from habil_map import Body, Path, Return, HabiMapCase
+from habil_map import Body as _Body
+from habil_map import Path as _Path
+from habil_map import Return as _Return
+from habil_map import HabiMapCase as _HabiMapCase
 
-get_api_status = HabiMapCase.get_case(
+import habil_case.tag as tag
+import habil_case.task as task
+
+
+get_api_status = _HabiMapCase.get_case(
     "https://habitica.com/api/v3/status",
-    Return(name='status', func=lambda v:v == "up"),
+    _Return(name='status', func=lambda v:v == "up"),
     token_required=False
 )
 
