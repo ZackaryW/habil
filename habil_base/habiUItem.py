@@ -38,14 +38,25 @@ class HabiUItem(metaclass=HabiUMeta):
     id : str
     _raw : dict
 
-    @abstractmethod
-    def update(self, **kwargs):
-        vals = {k:v for k,v in kwargs.items() if k in self.fields and k != "id"}
-        return vals
+    def __del__(self):
+        if self.id in self.__class__._instances[self.__class__]:
+            del self.__class__._instances[self.__class__][self.id]
 
     @abstractmethod
-    def delete(self):
-        pass
+    def update(self, **kwargs):
+        """
+        local update method, should not be called directly
+        """
+        vals = {}
+        for k, v in kwargs.items():
+            if k not in self.fields:
+                raise TypeError("{} is not a valid field".format(k))
+            if k == "id":
+                raise TypeError("id cannot be updated")
+            
+            vals[k] = v
+            
+        return vals
 
     # ANCHOR properties
     @property
