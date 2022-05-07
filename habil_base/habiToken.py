@@ -58,7 +58,7 @@ class HabiToken:
         data = {}
         with open(jsonpath, 'r') as f:
             data = json.load(f)
-        return cls.from_dict(dict=data, set_global=set_global)
+        return cls.from_dict(data=data, set_global=set_global)
 
 
 # ANCHOR global token 
