@@ -96,10 +96,6 @@ class HabiUItem(metaclass=HabiUMeta):
     # ANCHOR properties
 
     @property
-    def raw_init(self):
-        return self._raw.copy()
-
-    @property
     def expired(self) -> bool:
         return self.__class__.exist(self.id) == False
 
