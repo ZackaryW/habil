@@ -44,12 +44,11 @@ class AHabiTask(HabiUItem):
         return True
 
     @token_required()
-    def score_task(self, token=None, score: bool = True) -> bool:
+    def score_task(self,score: bool = True, token=None):
         res = habil_case.task.score_a_task(headers=token, taskId=self.id, direction="up" if score else "down")
         if not res.success:
             raise HabiRequestException(res)
-        return self.from_res(res)
-
+        return self.get(id=self.id, token=token)
 
 @dataclass(frozen=True)
 class CompletableTask(AHabiTask):
