@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import datetime
 import typing
 import requests
 from habil_map.habiMapAttr import HabiMapReturnParam
@@ -10,6 +11,8 @@ class HabiMapResponse(FrozenClass):
     is_json : bool
     json_data : typing.Optional[dict]
     is_dict : bool
+    timestamp : datetime.datetime
+    request_time : float
     has_data : bool = False
     success : bool = False
     status_code : int = None
@@ -21,12 +24,15 @@ class HabiMapResponse(FrozenClass):
         extract_data : bool = True,
     ) -> None:
         self.raw = raw
+        self.url = raw.url
         self.reason = raw.reason
         self.status_code = raw.status_code
         self.success = False
         self.is_dict = None
         self.is_json = False
         self.has_data = False
+        self.timestamp = datetime.datetime.now()
+        self.request_time = raw.elapsed.total_seconds()
 
         try:
             self.raw_data = raw.json()
