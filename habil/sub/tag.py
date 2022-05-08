@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from habil_base.exceptions import HabiRequestException
-from habil_base.habiSubElement import HabiSubElement
+from habil.sub import HabiSubElement
 from habil_base.habiToken import token_required
 import habil_case
 

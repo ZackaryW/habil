@@ -1,7 +1,6 @@
 from dataclasses import dataclass
-from habil.task import AHabiTask
+from habil.elements import AHabiTask
 from habil_base.habiToken import token_required
-import habil_case
 
 @dataclass(frozen=True)
 class HabiReward(AHabiTask):

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from habil.task import AHabiTask
+from habil.elements import AHabiTask
 from habil_base.habiToken import token_required
 
 @dataclass(frozen=True)
