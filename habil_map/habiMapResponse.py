@@ -2,60 +2,63 @@ from dataclasses import dataclass
 import typing
 import requests
 from habil_map.habiMapAttr import HabiMapReturnParam
+from habil_utils import FrozenClass
 
-@dataclass(frozen=True, init=False)
-class HabiMapResponse:
+@dataclass(init=False)
+class HabiMapResponse(FrozenClass):
+    url : str
     is_json : bool
     json_data : typing.Optional[dict]
     is_dict : bool
     has_data : bool = False
     success : bool = False
     status_code : int = None
-
+    
     def __init__(self, 
         raw : requests.Response,
         ret_params : typing.Dict[str, HabiMapReturnParam] = None,
         only_in_model : bool = True,
         extract_data : bool = True,
     ) -> None:
-        object.__setattr__(self, "raw", raw)
-        object.__setattr__(self, "reason", raw.reason)
-        object.__setattr__(self, "text", raw.text)
-        object.__setattr__(self, "is_dict", False)
-        object.__setattr__(self, "has_data", False)
-        object.__setattr__(self, "success", False)
-        # status code
-        object.__setattr__(self, "status_code", raw.status_code)
+        self.raw = raw
+        self.reason = raw.reason
+        self.status_code = raw.status_code
+        self.success = False
+        self.is_dict = None
+        self.is_json = False
+        self.has_data = False
 
         try:
-            json_data = raw.json()
-            object.__setattr__(self, "json_data", json_data.get("data", None))
-            object.__setattr__(self, "is_json", True)
-            if self.json_data is None:
-                return
-            object.__setattr__(self, "has_data", True)
-            
+            self.raw_data = raw.json()
+            self.is_json = True
+            self.json_data = self.raw_data.get("data", None)
+            if self.json_data is not None:
+                self.has_data = True
         except:
-            object.__setattr__(self, "json_data", None)
-            object.__setattr__(self, "is_json", False)
-            return
-
-        if not self.is_json:
-            return
+            self.raw_data = raw.text
+            self.is_json = False
+            self.json_data = None
         
-        # check success
-        if "success" in json_data and isinstance(json_data["success"], bool) and json_data["success"]:
-            object.__setattr__(self, "success", True)
+        if not self.has_data:
+            return self._freeze()
+
+        if "success" in self.raw_data:
+            self.success = self.raw_data["success"]
 
         # check type
         if isinstance(self.json_data, dict):
-            object.__setattr__(self, "is_dict", True)
+            self.is_dict = True
+        elif isinstance(self.json_data, list):
+            self.is_dict = False
+        
+        if self.is_dict is None:
+            return self._freeze()
 
         if ret_params is None or not self.is_dict or len(ret_params) == 0:
-            return
+            return self._freeze()
 
         if not extract_data:
-            return
+            return self._freeze()
 
         if only_in_model:
             data_params = {k: v for k, v in self.json_data.items() if k in ret_params}
@@ -64,6 +67,8 @@ class HabiMapResponse:
             ret : HabiMapReturnParam = ret_params[key]
             val = ret.validate(val)
             object.__setattr__(self, key, val)
+
+        return self._freeze()
 
     @property
     def is_list(self):
