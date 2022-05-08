@@ -2,6 +2,7 @@ from dataclasses import dataclass
 import datetime
 import requests
 from habil_base.exceptions import HabiRequestRateLimited
+from habil_map.habiMapResponse import HabiMapResponse
 
 class HabiMapMeta:
     RATE_LIMIT = None
@@ -42,18 +43,22 @@ class HabiMapMeta:
             raise HabiRequestRateLimited("Rate Limited, wait until {}".format(cls.RATE_LIMIT))
         
     @classmethod
-    def _log(cls, text, url: str):
-        cls.LOGS[url] = text
+    def _log(cls, res : HabiMapResponse, caller_name : str):
+        cls.LOGS[caller_name] = res
         while len(cls.LOGS) > cls.MAX_HOLD_LOGS:
             cls.LOGS.popitem(last=False)
 
     @classmethod
-    def get_log(cls, url: str):
-        return cls.LOGS.get(url, None)
+    def get_log(cls, caller:str =None,**kwargs):
+        for key, val in cls.LOGS.items():
+            if caller is not None and key == caller:
+                return val
+            if any(getattr(val, k, None) == v for k, v in kwargs.items()):
+                return val
     
     @classmethod
     def get_last_log(cls):
         if len(cls.LOGS) == 0:
             return None
         # get last log
-        return cls.LOGS.get(cls.LOGS.keys()[-1], None)
+        return cls.LOGS.get(list(cls.LOGS.keys())[-1], None)

@@ -147,7 +147,7 @@ class HabiMapCase:
         HabiMapMeta.parse_rate_limit_state(res)
 
         hres = HabiMapResponse.parse(res, self.ret_params, extract_data, only_in_model)
-        HabiMapMeta._log(hres, url)
+        HabiMapMeta._log(res=hres, caller_name=caller_name)
         return hres
 
     @classmethod
