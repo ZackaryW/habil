@@ -138,8 +138,18 @@ class HabiMapCase:
                 raise ValueError(f"{k} is required")
             
             body[k] = v.default
+        if len(path) == 0:
+            path = None
+        if len(body) == 0:
+            body = None
 
         return path, body
+
+    def __call__(self, headers: typing.Dict[str, str] = None,
+        extract_data : bool = True,
+        only_in_model: bool = True,
+        **kwargs) -> HabiMapResponse:
+        return self.request(headers, extract_data, only_in_model, **kwargs)
 
     def request(
         self,
@@ -147,7 +157,7 @@ class HabiMapCase:
         extract_data : bool = True,
         only_in_model: bool = True,
         **kwargs
-    ):
+    ) -> HabiMapResponse:
         path, body = self._parse_vars(**kwargs)
         url = self._parse_url(**kwargs)
 
