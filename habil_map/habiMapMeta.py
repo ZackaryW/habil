@@ -44,7 +44,7 @@ class HabiMapMeta:
         
     @classmethod
     def _log(cls, res : HabiMapResponse, caller_func ):
-        cls.LOGS[f"{caller_func} {int(res.timestamp.timestamp()*1000)}"] = res
+        cls.LOGS[f"{str(caller_func).lower()} {int(res.timestamp.timestamp()*1000)}"] = res
         while len(cls.LOGS) > cls.MAX_HOLD_LOGS:
             cls.LOGS.popitem(last=False)
 
@@ -54,8 +54,9 @@ class HabiMapMeta:
 
     @classmethod
     def get_log(cls, caller:str =None,timestamp : int=None,**kwargs):
+        
         for key, val in cls.LOGS.items():
-            if caller is not None and isinstance(caller, str) and str(caller) in key:
+            if caller is not None and isinstance(caller, str) and str(caller).lower() in key:
                 return val
             if timestamp is not None and isinstance(timestamp, int) and str(timestamp) in key:
                 return val
