@@ -5,7 +5,7 @@ this library contains unrelated functions and classes
 import inspect
 import typing
 
-def get_caller_name() -> str:
+def get_called_name() -> str:
     """ 
     returns the name of the calling method
 
@@ -17,9 +17,16 @@ def get_caller_name() -> str:
     calling_method_name = calframe[1][3]
     return calling_method_name
 
+def get_caller_name() -> str:
+    stack = inspect.stack()
+    return stack[2].function
+    
+
 def get_caller_class():
     stack = inspect.stack()
-    calling_class = stack[2][0].f_locals['self']
+    calling_class = stack[2][0].f_locals.get("self", None)
+    if calling_class is None:
+        calling_class = stack[2][0].f_locals.get("cls", None)
     return calling_class
 
 def caller_hasattr(attr: str, deep:bool = False) -> bool:
@@ -85,3 +92,16 @@ def caller_getattr(attr: str, default =None, deep: bool = False) -> object:
                 return getattr(v, attr, default)
 
     return default
+
+"""
+source: https://stackoverflow.com/questions/3603502/prevent-creating-new-attributes-outside-init
+"""
+class FrozenClass(object):
+    __isfrozen = False
+    def __setattr__(self, key, value):
+        if self.__isfrozen and not hasattr(self, key):
+            raise TypeError( "%r is a frozen class" % self )
+        object.__setattr__(self, key, value)
+
+    def _freeze(self):
+        self.__isfrozen = True
