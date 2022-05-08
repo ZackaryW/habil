@@ -13,7 +13,7 @@ import sys
 import logging
 logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
 
-class t_map_cases(unittest.TestCase):
+class t_ext(unittest.TestCase):
     def setUp(self) -> None:
         HabiToken.from_json("config.json", set_global=True)
         from zxutil.bridge import Bridge

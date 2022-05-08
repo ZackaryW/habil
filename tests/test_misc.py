@@ -30,11 +30,8 @@ class t_map_cases(unittest.TestCase):
     def test_get_all_tasks(self):
         from habil import HabiTask
 
-        try:
-            tasks = HabiTask.get_all()
-            pprint(tasks)
-        except:
-            pass
+        tasks = HabiTask.get_all()
+        pprint(tasks)
         
 
     def test_get_and_update_one_task(self):
