@@ -52,7 +52,6 @@ class t_map_cases(unittest.TestCase):
         self.assertEqual(random_str, task.text)
 
     def test_change_habit_up_down(self):
-        from habil import HabiTask
         from zxutil.bridge import Bridge
         bridge= Bridge("config.json")
         habit = HabiHabit.get(id=bridge.test_habit)
@@ -65,4 +64,14 @@ class t_map_cases(unittest.TestCase):
             habit = habit.good_habit(True)
 
         print(repr(habit))
+        pprint(HabiMapMeta.get_last_log())
+
+    def test_score_task(self):
+        from habil import HabiTask
+        from zxutil.bridge import Bridge
+        bridge= Bridge("config.json")
+        habit = HabiTask.get(id=bridge.test_habit)
+        pprint(HabiHabit.get_raw(item=habit.id).json_data)
+        habit = habit.score_task(True)
+        print("______________________________")
         pprint(HabiHabit.get_raw(item=habit.id).json_data)
