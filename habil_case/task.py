@@ -33,7 +33,7 @@ update_a_task = HabiMapCase.put_case(
     Body(name="text", xtype=str, optional=True),
     Body(name="attribute", xrange=["str", "int", "per", "con"], optional=True),
     Body(name="collapseChecklist", xtype=bool, optional=True, default=False),
-    Body(name="notes", xtype=str),
+    Body(name="notes", xtype=str, optional=True),
     Body(name="date	", xtype=datetime, optional=True),
     Body(name="priority", xtype=int, optional=True, default=1),
     # ... skipping some
