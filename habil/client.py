@@ -1,10 +1,12 @@
 from dataclasses import dataclass
 import dataclasses
 import typing
+from habil.sub.tag import HabiTagMeta
 from habil_base.exceptions import HabiMissingTokenException
 from habil_base.habiToken import HabiToken
 from habil.tasking import HabiTask
 from habil_utils import FrozenClass
+from habil_map.habiMapMeta import HabiMapMeta
 
 class Client(FrozenClass):
     TASK = 0
@@ -31,7 +33,21 @@ class Client(FrozenClass):
     def get(self, category : int, id : str):
         if category == self.TASK:
             return HabiTask.get(token=self.token, taskId=id)
-
     
     def create(self, category : int, **kwargs):
         raise NotImplementedError
+
+
+    # ANCHOR config properties
+    @property
+    def CONFIG_GLOBAL_TAGS_refresh_interval(self):
+        return HabiTagMeta.PULL_INTERVAL
+    
+    @CONFIG_GLOBAL_TAGS_refresh_interval.setter
+    def CONFIG_GLOBAL_TAGS_refresh_interval_setter(self, value):
+        HabiTagMeta.PULL_INTERVAL = value
+
+    # ANCHOR stats
+    @property
+    def STAT_rate_limit_remaining(self):
+        return HabiMapMeta.RATE_LIMIT_REMAINING
