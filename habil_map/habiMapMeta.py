@@ -43,15 +43,21 @@ class HabiMapMeta:
             raise HabiRequestRateLimited("Rate Limited, wait until {}".format(cls.RATE_LIMIT))
         
     @classmethod
-    def _log(cls, res : HabiMapResponse, caller_name : str):
-        cls.LOGS[caller_name] = res
+    def _log(cls, res : HabiMapResponse, caller_func ):
+        cls.LOGS[f"{caller_func} {int(res.timestamp.timestamp()*1000)}"] = res
         while len(cls.LOGS) > cls.MAX_HOLD_LOGS:
             cls.LOGS.popitem(last=False)
 
     @classmethod
-    def get_log(cls, caller:str =None,**kwargs):
+    def logs(cls):
+        return cls.LOGS
+
+    @classmethod
+    def get_log(cls, caller:str =None,timestamp : int=None,**kwargs):
         for key, val in cls.LOGS.items():
-            if caller is not None and key == caller:
+            if caller is not None and isinstance(caller, str) and str(caller) in key:
+                return val
+            if timestamp is not None and isinstance(timestamp, int) and str(timestamp) in key:
                 return val
             if any(getattr(val, k, None) == v for k, v in kwargs.items()):
                 return val
