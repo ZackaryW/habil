@@ -13,11 +13,13 @@ class HabiMapResponse:
     status_code : int = None
 
     def __init__(self, 
-        raw : typing.Union[requests.Response, dict],
+        raw : requests.Response,
         ret_params : typing.Dict[str, HabiMapReturnParam] = None,
         only_in_model : bool = True,
         extract_data : bool = True,
     ) -> None:
+        object.__setattr__(self, "raw", raw)
+        object.__setattr__(self, "reason", raw.reason)
         object.__setattr__(self, "text", raw.text)
         object.__setattr__(self, "is_dict", False)
         object.__setattr__(self, "has_data", False)
