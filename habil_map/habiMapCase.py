@@ -14,6 +14,8 @@ class HabiMapMeta:
     RATE_LIMIT = None
     MIN_TRIGGER_RATE_LIMIT = 1
     RATE_LIMIT_REMAINING = None
+    LOGS = {}
+    MAX_HOLD_LOGS = 10
 
     @classmethod
     def parse_rate_limit_state(cls, res: requests.Response):
@@ -46,6 +48,22 @@ class HabiMapMeta:
         if gmt_now < cls.RATE_LIMIT:
             raise HabiMapRateLimited("Rate Limited, wait until {}".format(cls.RATE_LIMIT))
         
+    @classmethod
+    def _log(cls, text, url: str):
+        cls.LOGS[url] = text
+        while len(cls.LOGS) > cls.MAX_HOLD_LOGS:
+            cls.LOGS.popitem(last=False)
+
+    @classmethod
+    def get_log(cls, url: str):
+        return cls.LOGS.get(url, None)
+    
+    @classmethod
+    def get_last_log(cls):
+        if len(cls.LOGS) == 0:
+            return None
+        # get last log
+        return cls.LOGS.get(cls.LOGS.keys()[-1], None)
 
 @dataclass(frozen=True, init=False)
 class HabiMapCase:
@@ -174,11 +192,15 @@ class HabiMapCase:
             kwargs["headers"] = headers
 
         HabiMapMeta.check_rate_limit()
-        res = self.request_method(**kwargs)
+        res : requests.Response = self.request_method(**kwargs)
         HabiMapMeta.parse_rate_limit_state(res)
+        try:
+            res.json()
+        except:
+            # if not jsonable, a log is written
+            HabiMapMeta._log(res.text, url)
 
         return HabiMapResponse.parse(res, self.ret_params, extract_data, only_in_model)
-    
 
     @classmethod
     def get_case(cls, url, *args, token_required: bool = True) -> 'HabiMapCase':
