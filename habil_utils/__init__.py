@@ -17,6 +17,13 @@ def get_called_name() -> str:
     calling_method_name = calframe[1][3]
     return calling_method_name
 
+def get_simple_caller_name() -> str:
+    """
+    returns the name of the calling method
+    """
+    stack = inspect.stack()
+    return stack[2].function
+
 def get_caller_name() -> str:
     stack = inspect.stack()
     func_name = stack[2].function
