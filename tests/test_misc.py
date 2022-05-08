@@ -1,14 +1,14 @@
 from pprint import pp, pprint
 import unittest
-import requests
-import json
-from habil.habit import HabiHabit
+from habil.elements.habit import HabiHabit
 from habil_base.exceptions import HabiRequestRateLimited
 from habil_base.habiToken import HabiToken
 from habil_base.habiUItem import HabiUItem
 from habil_map import HabiMapMeta
 import habil_case
-
+import sys
+import logging
+logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
 
 class t_map_cases(unittest.TestCase):
     def setUp(self) -> None:
@@ -64,7 +64,7 @@ class t_map_cases(unittest.TestCase):
             habit = habit.good_habit(True)
 
         print(repr(habit))
-        pprint(HabiMapMeta.get_last_log())
+        pprint(HabiMapMeta.get_log(caller="good_habit"))
 
     def test_score_task(self):
         from habil import HabiTask

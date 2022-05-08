@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from habil.__task__ import CompletableTask
+from habil.task import CompletableTask
 
 @dataclass(frozen=True)
 class HabiDaily(CompletableTask):

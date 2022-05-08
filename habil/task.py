@@ -1,59 +1,62 @@
-import typing
-from habil.daily import HabiDaily
-from habil.habit import HabiHabit
-from habil.reward import HabiReward
-from habil.todo import HabiTodo
-from habil_base.habiToken import token_required
+from dataclasses import dataclass
+from re import S
+from habil_base.exceptions import HabiRequestException
+from habil_base.habiUItem import HabiUItem
 import habil_case
-from habil_map.habiMapResponse import HabiMapResponse
+from habil_base import token_required
 
-class HabiTask:
-    @classmethod
-    def _from_res(cls, data: HabiMapResponse) -> 'HabiTask':
-        if isinstance(data, HabiMapResponse):
-            method = "from_res"
-            xtype = data.data.get("type",None)
-        elif isinstance(data, dict):
-            method = "from_dict"
-            xtype = data.get("type",None)
-        else:
-            raise TypeError("data must be HabiMapResponse or dict")
+@dataclass(frozen=True)
+class AHabiTask(HabiUItem):
+    createdAt : str
+    updatedAt : str
+    text : str
+    _type = "task"
 
-        if xtype is None:
-            raise ValueError("type is missing")
-        if xtype == "daily":
-            return getattr(HabiDaily, method)(data)
-        elif xtype == "habit":
-            return getattr(HabiHabit, method)(data)
-        elif xtype == "reward":
-            return getattr(HabiReward, method)(data)
-        elif xtype == "todo":
-            return getattr(HabiTodo, method)(data)
-        else:
-            raise ValueError(f"unknown type: {xtype}")
+    def __repr__(self) -> str:
+        return "{}({})".format(self.__class__.__name__, self.text)
+
+    def __str__(self) -> str:
+        return "{}({})".format(self.__class__.__name__, self.id)
 
     @classmethod
     @token_required()
-    def get(cls, id : str, token=None) -> typing.Union[HabiDaily, HabiHabit, HabiReward, HabiTodo ,None]:
-        task_res = habil_case.task.get_a_task(headers=token, taskId=id)
-        if not task_res.success:
-            return None
-        return cls._from_res(task_res)
+    def get(cls, id : str, token=None, **kwargs):
+        res = habil_case.task.get_a_task(headers=token, taskId=id, **kwargs)
+        if not res.success:
+            raise HabiRequestException(res)
+        if res.type == cls._type:
+            return cls.from_res(res)
+        return None
 
-    @classmethod
     @token_required()
-    def get_all(cls, token=None) -> typing.List[typing.Union[HabiDaily, HabiHabit, HabiReward, HabiTodo]]:
-        tasks_res = habil_case.task.get_users_tasks(headers=token)
-        if not tasks_res.success:
-            return []
+    def update(self, token=None,**kwargs)-> 'AHabiTask':
+        res = habil_case.task.update_a_task(headers=token, taskId=self.id, **kwargs)
+        if not res.success:
+            raise HabiRequestException(res)
+        created_obj = self.from_res(res)
+        return created_obj
 
-        tasks_raw = tasks_res.json_data
-        if not isinstance(tasks_raw, list):
-            raise TypeError("tasks_raw must be a list, but is {}".format(type(tasks_raw)))
+    @token_required()
+    def delete(self, token=None, **kwargs) -> bool:
+        res = habil_case.task.delete_a_task(headers=token, taskId=self.id, **kwargs)
+        if not res.success:
+            raise HabiRequestException(res)
+        return True
+
+    @token_required()
+    def score_task(self,score: bool = True, token=None, **kwargs):
+        res = habil_case.task.score_a_task(headers=token, taskId=self.id, direction="up" if score else "down", **kwargs)
+        if not res.success:
+            raise HabiRequestException(res)
+        return self.get(id=self.id, token=token)
+
+@dataclass(frozen=True)
+class CompletableTask(AHabiTask):
+    completed : bool
+
+    @token_required()
+    def complete(self, revert: bool = False, token=None) -> 'CompletableTask':
+        if not isinstance(revert, bool):
+            raise TypeError("revert must be bool")
+
         
-        tasks = []
-        for task_raw in tasks_raw:
-            task = cls._from_res(task_raw)
-            if task is not None:
-                tasks.append(task)
-        return tasks

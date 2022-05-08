@@ -1,8 +1,8 @@
 from pprint import pp, pprint
 from time import sleep
 import unittest
-from habil.daily import HabiDaily
-from habil.habit import HabiHabit
+from habil.elements.daily import HabiDaily
+from habil.elements.habit import HabiHabit
 from habil_base.exceptions import HabiRequestRateLimited
 from habil_base.habiToken import HabiToken
 from habil_base.habiUItem import HabiUItem

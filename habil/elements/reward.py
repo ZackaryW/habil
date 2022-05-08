@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from habil.__task__ import AHabiTask
+from habil.task import AHabiTask
 from habil_base.habiToken import token_required
 import habil_case
 

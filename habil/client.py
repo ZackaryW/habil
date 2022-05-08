@@ -3,7 +3,7 @@ import dataclasses
 import typing
 from habil_base.exceptions import HabiMissingTokenException
 from habil_base.habiToken import HabiToken
-from habil.task import HabiTask
+from habil.tasking import HabiTask
 from habil_utils import FrozenClass
 
 class Client(FrozenClass):
