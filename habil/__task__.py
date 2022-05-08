@@ -20,8 +20,8 @@ class AHabiTask(HabiUItem):
 
     @classmethod
     @token_required()
-    def get(cls, id : str, token=None):
-        res = habil_case.task.get_a_task(headers=token, taskId=id)
+    def get(cls, id : str, token=None, **kwargs):
+        res = habil_case.task.get_a_task(headers=token, taskId=id, **kwargs)
         if not res.success:
             raise HabiRequestException(res)
         if res.type == cls._type:
@@ -37,15 +37,15 @@ class AHabiTask(HabiUItem):
         return created_obj
 
     @token_required()
-    def delete(self, token=None) -> bool:
-        res = habil_case.task.delete_a_task(headers=token, taskId=self.id)
+    def delete(self, token=None, **kwargs) -> bool:
+        res = habil_case.task.delete_a_task(headers=token, taskId=self.id, **kwargs)
         if not res.success:
             raise HabiRequestException(res)
         return True
 
     @token_required()
-    def score_task(self,score: bool = True, token=None):
-        res = habil_case.task.score_a_task(headers=token, taskId=self.id, direction="up" if score else "down")
+    def score_task(self,score: bool = True, token=None, **kwargs):
+        res = habil_case.task.score_a_task(headers=token, taskId=self.id, direction="up" if score else "down", **kwargs)
         if not res.success:
             raise HabiRequestException(res)
         return self.get(id=self.id, token=token)
