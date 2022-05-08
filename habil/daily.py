@@ -1,3 +1,6 @@
-from habil.__task__ import AHabiTask
+from dataclasses import dataclass
+from habil.__task__ import CompletableTask
 
-class HabiDaily(AHabiTask): pass
+@dataclass(frozen=True)
+class HabiDaily(CompletableTask):
+    _type = "daily"

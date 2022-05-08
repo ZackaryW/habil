@@ -1,3 +1,6 @@
-from habil.__task__ import AHabiTask
+from dataclasses import dataclass
+from habil.__task__ import CompletableTask
 
-class HabiTodo(AHabiTask): pass
+@dataclass(frozen=True)
+class HabiTodo(CompletableTask): 
+    _type = "todo"

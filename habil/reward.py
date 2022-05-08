@@ -1,3 +1,6 @@
+from dataclasses import dataclass
 from habil.__task__ import AHabiTask
 
-class HabiReward(AHabiTask): pass
+@dataclass(frozen=True)
+class HabiReward(AHabiTask):
+    _type = "reward"
