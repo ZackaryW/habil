@@ -15,3 +15,11 @@ class HabiHabit(AHabiTask):
     @token_required()
     def bad_habit(self,flag:bool = True, token=None):
         return self.update(token=token,up=flag)
+
+    @token_required()
+    def score_good(self,token=None):
+        return self.score_task(score=True, token=token)
+
+    @token_required()
+    def score_bad(self,token=None):
+        return self.score_task(score=False, token=token)
