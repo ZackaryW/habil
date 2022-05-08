@@ -4,6 +4,10 @@ add_a_tag_to_a_task = HabiMapCase.post_case(
     "https://habitica.com/api/v3/tasks/{taskId}/tags/{tagId}",
 )
 
+delete_a_task = HabiMapCase.delete_case(
+    "https://habitica.com/api/v3/tasks/{taskId}",
+)
+
 get_a_task = HabiMapCase.get_case(
     "https://habitica.com/api/v3/tasks/{taskId}",
 )
