@@ -7,9 +7,20 @@ import habil_case.tag as tag
 import habil_case.task as task
 
 
+#ANCHOR bug report
+
+bug_report = _HabiMapCase.post_case(
+    "https://habitica.com/api/v4/bug-report",
+    _Body(name="message", xtype=str),
+    _Body(name="email", xtype=str),
+)
+
+#ANCHOR else
+
 get_api_status = _HabiMapCase.get_case(
     "https://habitica.com/api/v3/status",
     _Return(name='status', func=lambda v:v == "up"),
     token_required=False
 )
+
 
