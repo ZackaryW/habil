@@ -1,25 +1,32 @@
 from dataclasses import dataclass
-from re import S
+from habil.sub.tag import HabiTag
 from habil_base.exceptions import HabiRequestException
 from habil_base.habiUItem import HabiUItem
 import habil_case
 from habil_base import token_required
+import typing
 
 @dataclass(frozen=True)
 class AHabiTask(HabiUItem):
     createdAt : str
     updatedAt : str
     text : str
+    tags : typing.List[str]
     _type = "task"
 
     def __post_init__(self):
-        pass
+        tag_objs = []
+        for tag in self.tags:
+            atag = HabiTag.get(id=tag)
+            tag_objs.append(atag)
+        object.__setattr__(self, "tags", tag_objs)
 
     def __repr__(self) -> str:
         return "{}({})".format(self.__class__.__name__, self.text)
 
     def __str__(self) -> str:
         return "{}({})".format(self.__class__.__name__, self.id)
+
 
     @classmethod
     @token_required()
@@ -56,8 +63,10 @@ class AHabiTask(HabiUItem):
 @dataclass(frozen=True)
 class CompletableTask(AHabiTask):
     completed : bool
+    checklist : typing.List[str]
 
     def __post_init__(self):
+        super().__post_init__()
         pass
 
     @token_required()
