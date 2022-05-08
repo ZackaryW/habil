@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 import json 
+import functools
+from habil_utils import caller_getattr
 
 @dataclass(frozen=True)
 class HabiToken:
@@ -64,15 +66,30 @@ class HabiToken:
 # ANCHOR global token 
 _SINGLETON_INSTANCE = None
 
-def token_required(func):
-    def wrapper(*args, **kwargs):
-        global _SINGLETON_INSTANCE
-        if "token" not in kwargs and _SINGLETON_INSTANCE is None:
-            raise ValueError("Token is required")
-        if "token" not in kwargs:
-            kwargs["token"] = _SINGLETON_INSTANCE.headers
-        token = kwargs["token"]
-        if isinstance(token, HabiToken):
-            kwargs["token"] = token.headers
-        return func(*args, **kwargs)
-    return wrapper
+def token_required(glob :bool = True, dig:bool = True):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            if "token" in kwargs and isinstance(kwargs["token"], HabiToken):
+                kwargs["token"] = kwargs["token"].headers
+                return func(*args, **kwargs)
+            elif "token" in kwargs and isinstance(kwargs["token"], dict):
+                return func(*args, **kwargs)
+            elif not glob and not dig:
+                raise ValueError("token is required")
+
+            if glob:
+                global _SINGLETON_INSTANCE
+                if _SINGLETON_INSTANCE is None:
+                    raise ValueError("token is required")
+                kwargs["token"] = _SINGLETON_INSTANCE.headers
+                return func(*args, **kwargs)
+            
+            if dig and (token:=caller_getattr("token", None)) is not None:
+                if isinstance(token, HabiToken):
+                    token = token.headers
+                kwargs["token"] = token
+                return func(*args, **kwargs)
+            return
+        return wrapper
+    return decorator
