@@ -10,6 +10,7 @@ delete_a_task = HabiMapCase.delete_case(
 
 get_a_task = HabiMapCase.get_case(
     "https://habitica.com/api/v3/tasks/{taskId}",
+    Return(name="type", xtype=str),
 )
 
 get_users_tasks = HabiMapCase.get_case(
