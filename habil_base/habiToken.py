@@ -78,6 +78,12 @@ def token_required(glob :bool = True, dig:bool = True):
             elif not glob and not dig:
                 raise ValueError("token is required")
 
+            if dig and (token:=caller_getattr("token", None)) is not None:
+                if isinstance(token, HabiToken):
+                    token = token.headers
+                kwargs["token"] = token
+                return func(*args, **kwargs)
+
             if glob:
                 global _SINGLETON_INSTANCE
                 if _SINGLETON_INSTANCE is None:
@@ -85,11 +91,6 @@ def token_required(glob :bool = True, dig:bool = True):
                 kwargs["token"] = _SINGLETON_INSTANCE.headers
                 return func(*args, **kwargs)
             
-            if dig and (token:=caller_getattr("token", None)) is not None:
-                if isinstance(token, HabiToken):
-                    token = token.headers
-                kwargs["token"] = token
-                return func(*args, **kwargs)
             return
         return wrapper
     return decorator
