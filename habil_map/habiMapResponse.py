@@ -10,6 +10,7 @@ class HabiMapResponse:
     x_has_data : bool
     x_data : typing.Dict = None
     x_is_list : bool = False
+    x_success : bool = None
 
     def __init__(self, 
         x_raw : typing.Union[requests.Response, dict],
@@ -23,6 +24,10 @@ class HabiMapResponse:
         object.__setattr__(self, "x_has_data", x_has_data)
         for k, v in kwargs.items():
             object.__setattr__(self, k, v)
+
+    @property
+    def success(self) -> bool:
+        return self.x_success
 
     @classmethod
     def parse(cls, raw_response : requests.Response,ret_params : dict,  extract_data : bool = True, only_in_model : bool = True) -> 'HabiMapResponse':
@@ -51,6 +56,7 @@ class HabiMapResponse:
                 x_raw=raw_response,
                 x_is_json=True,
                 x_has_data=True,
+                x_success=json_data.get("success", None),
             )
     
         #
@@ -63,6 +69,7 @@ class HabiMapResponse:
                 x_has_data=True,
                 x_is_list=True,
                 x_data=data_params,
+                x_success=json_data.get("success", None),
             )
 
 
@@ -77,7 +84,8 @@ class HabiMapResponse:
             
         return cls(
             x_raw = raw_response,
-            x_data = json_data,
+            x_data = json_data.get("data", None),
             x_is_json = is_json,
+            x_success=json_data.get("success", None),
             **kwargs
         )
