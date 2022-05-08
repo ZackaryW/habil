@@ -12,6 +12,9 @@ class AHabiTask(HabiUItem):
     text : str
     _type = "task"
 
+    def __post_init__(self):
+        pass
+
     def __repr__(self) -> str:
         return "{}({})".format(self.__class__.__name__, self.text)
 
@@ -53,6 +56,9 @@ class AHabiTask(HabiUItem):
 @dataclass(frozen=True)
 class CompletableTask(AHabiTask):
     completed : bool
+
+    def __post_init__(self):
+        pass
 
     @token_required()
     def complete(self, revert: bool = False, token=None) -> 'CompletableTask':
