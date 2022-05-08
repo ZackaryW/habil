@@ -1,7 +1,7 @@
 
 from dataclasses import dataclass
 import datetime
-from habil_base.exceptions import HabiRequestRateLimited
+import logging
 from habil_map.habiMapAttr import HabiMapAttr, HabiMapPathParam, HabiMapBodyParam, HabiMapReturnParam
 import typing
 import requests
@@ -111,21 +111,23 @@ class HabiMapCase:
     def __call__(self, headers: typing.Dict[str, str] = None,
         extract_data : bool = True,
         only_in_model: bool = True,
+        caller_func : str  = None,
         **kwargs) -> HabiMapResponse:
-        caller_name = get_caller_name()
-        return self.request(headers, extract_data, only_in_model, caller_name=caller_name, **kwargs)
+        if caller_func is None:
+            caller_func = get_caller_name()
+        return self.request(headers, extract_data, only_in_model, caller_func=caller_func, **kwargs)
 
     def request(
         self,
         headers: typing.Dict[str, str] = None,
         extract_data : bool = True,
         only_in_model: bool = True,
-        caller_name : str  = None,
+        caller_func : str  = None,
         **kwargs
     ) -> HabiMapResponse:
-        if caller_name is None:
-            caller_name = get_caller_name()
-        print(f">>>> {caller_name}")
+        if caller_func is None:
+            caller_func = get_caller_name()
+        logging.debug(f"request called by {caller_func}")
 
         path, body = self._parse_vars(**kwargs)
         url = self._parse_url(**kwargs)
@@ -147,7 +149,7 @@ class HabiMapCase:
         HabiMapMeta.parse_rate_limit_state(res)
 
         hres = HabiMapResponse.parse(res, self.ret_params, extract_data, only_in_model)
-        HabiMapMeta._log(res=hres, caller_name=caller_name)
+        HabiMapMeta._log(res=hres, caller_func=caller_func)
         return hres
 
     @classmethod
