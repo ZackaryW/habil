@@ -23,9 +23,6 @@ class HabiUMeta(type):
         if raw is None:
             raise TypeError("_raw_ must be provided")
 
-        if id in cls._instances[cls]:
-            del cls._instances[cls][id]
-
         cls._instances[cls][id] = super().__call__(*args, **kwargs)
         cls._raw[cls][id] = datetime.now(), raw
 
@@ -73,31 +70,15 @@ class HabiUItem(metaclass=HabiUMeta):
     def __str__(self) -> str:
         return self.__repr__()
 
-    def __del__(self):
-        if self.id in self.__class__._instances[self.__class__]:
-            del self.__class__._instances[self.__class__][self.id]
-
     @abstractmethod
     def update(self, **kwargs):
-        """
-        local update method, should not be called directly
-        """
-        vals = {}
-        for k, v in kwargs.items():
-            if k not in self.__class__.fields():
-                raise TypeError("{} is not a valid field".format(k))
-            if k == "id":
-                raise TypeError("id cannot be updated")
-            
-            vals[k] = v
-            
-        return vals
+        pass
 
     # ANCHOR properties
 
     @property
     def expired(self) -> bool:
-        return self.__class__.exist(self.id) == False
+        return self.__class__._instances[self.__class__][self.id] != self
 
     # ANCHOR Classmethods
     @classmethod
