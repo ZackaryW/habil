@@ -1,14 +1,12 @@
 
 from dataclasses import dataclass
 import datetime
+from habil_base.exceptions import HabiRequestRateLimited
 from habil_map.habiMapAttr import HabiMapAttr, HabiMapPathParam, HabiMapBodyParam, HabiMapReturnParam
 import typing
 import requests
 from string import Formatter
 from habil_map.habiMapResponse import HabiMapResponse
-
-class HabiMapException(Exception): pass
-class HabiMapRateLimited(HabiMapException): pass
 
 class HabiMapMeta:
     RATE_LIMIT = None
@@ -46,7 +44,7 @@ class HabiMapMeta:
             return
         gmt_now = datetime.datetime.utcnow()
         if gmt_now < cls.RATE_LIMIT:
-            raise HabiMapRateLimited("Rate Limited, wait until {}".format(cls.RATE_LIMIT))
+            raise HabiRequestRateLimited("Rate Limited, wait until {}".format(cls.RATE_LIMIT))
         
     @classmethod
     def _log(cls, text, url: str):
