@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from re import S
 from habil_base.exceptions import HabiRequestException
 from habil_base.habiUItem import HabiUItem
 import habil_case
@@ -42,6 +43,14 @@ class AHabiTask(HabiUItem):
             raise HabiRequestException(res)
         return True
 
+
 @dataclass(frozen=True)
 class CompletableTask(AHabiTask):
     completed : bool
+
+    @token_required()
+    def complete(self, revert: bool = False, token=None) -> 'CompletableTask':
+        if not isinstance(revert, bool):
+            raise TypeError("revert must be bool")
+
+        
