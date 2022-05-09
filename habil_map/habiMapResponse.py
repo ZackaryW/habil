@@ -20,7 +20,6 @@ class HabiMapResponse(FrozenClass):
     def __init__(self, 
         raw : requests.Response,
         ret_params : typing.Dict[str, HabiMapReturnParam] = None,
-        only_in_model : bool = True,
         extract_data : bool = True,
     ) -> None:
         self.raw = raw
@@ -66,15 +65,49 @@ class HabiMapResponse(FrozenClass):
         if not extract_data:
             return self._freeze()
 
-        if only_in_model:
-            data_params = {k: v for k, v in self.json_data.items() if k in ret_params}
-                
-        for key, val in data_params.items():
-            ret : HabiMapReturnParam = ret_params[key]
+        for key, ret in ret_params.items():
+            key : str
+            ret : HabiMapReturnParam
+            val = self._dig(key, self.json_data)
+            if val is None:
+                continue
             val = ret.validate(val)
+            if ret.rename_to is not None:
+                key = ret.rename_to
             object.__setattr__(self, key, val)
 
         return self._freeze()
+
+    def _dig(self, key : str, val) -> typing.Any:
+        keys = key.split(".")
+        if len(keys) == 1:
+            return val
+        
+        for k in keys:
+            if isinstance(val, dict):
+                xval = val.get(k, None)
+            elif isinstance(val, typing.Iterable):
+                xval = val[int(k)]
+            else:
+                xval = getattr(val, k, None)
+            
+            if xval is None:
+                return None
+            
+            val = xval
+
+        return val
+
+    def __repr__(self):
+        ret_dict = {k:v for k,v in self.__dict__.items() if not k.startswith("_")}
+        ret_dict.pop("raw_data", None)
+        ret_dict.pop("raw", None)
+        ret_dict.pop("json_data", None)
+        ret_dict = "\n".join(f"{k}={v}" for k,v in ret_dict.items())
+        return f"{self.__class__.__name__}({ret_dict})"
+
+    def __str__(self):
+        return f"{self.__class__.__name__}({self.url} @ {self.timestamp})"
 
     @property
     def is_list(self):
@@ -89,5 +122,5 @@ class HabiMapResponse(FrozenClass):
         return self.json_data
 
     @classmethod
-    def parse(cls, raw_response : requests.Response,ret_params : dict,  extract_data : bool = True, only_in_model : bool = True) -> 'HabiMapResponse':
-        return cls(raw_response, ret_params, extract_data, only_in_model)
+    def parse(cls, raw_response : requests.Response,ret_params : dict,  extract_data : bool = True) -> 'HabiMapResponse':
+        return cls(raw_response, ret_params, extract_data)
