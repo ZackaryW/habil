@@ -1,8 +1,10 @@
 from dataclasses import dataclass
 import json 
 import functools
+import logging
+import habil_case
 from habil_utils import caller_getattr
-
+from habil_base.exceptions import HabiRequestException
 @dataclass(frozen=True)
 class HabiToken:
     user_id : str
@@ -37,7 +39,16 @@ class HabiToken:
 
     @classmethod
     def login(cls, username : str, password : str, appid : str=None, set_global : bool = False) -> 'HabiToken':
-        pass
+        res = habil_case.user.login(username=username, password=password, appid=appid)
+        if res.fail:
+            raise HabiRequestException(res)
+        token = HabiToken.create(
+            user_id=res.id,
+            api_token=res.apiToken,
+            app_id=appid,
+            set_global=set_global
+        )
+        return token
     
     @classmethod
     def create(cls, user_id : str, api_token : str, app_id : str=None, set_global : bool = False) -> 'HabiToken':
@@ -78,7 +89,7 @@ def token_required(glob :bool = True, dig:bool = True, dig_deep:bool = False) ->
             elif not glob and not dig:
                 raise ValueError("token is required")
 
-            if dig and (token:=caller_getattr("token", default=None, deep=False)) is not None:
+            if dig and (token:=caller_getattr("token", default=None, deep=dig_deep)) is not None:
                 if isinstance(token, HabiToken):
                     token = token.headers
                 kwargs["token"] = token
@@ -86,18 +97,12 @@ def token_required(glob :bool = True, dig:bool = True, dig_deep:bool = False) ->
 
             if glob:
                 global _SINGLETON_INSTANCE
-                if _SINGLETON_INSTANCE is None:
-                    raise ValueError("token is required")
-                kwargs["token"] = _SINGLETON_INSTANCE.headers
-                return func(*args, **kwargs)
+                if _SINGLETON_INSTANCE is not None:
+                    kwargs["token"] = _SINGLETON_INSTANCE.headers
+                    return func(*args, **kwargs)
             
-            if dig_deep and (token:=caller_getattr("token", default=None, deep=True)) is not None:
-                if isinstance(token, HabiToken):
-                    token = token.headers
-                kwargs["token"] = token
-                return func(*args, **kwargs)
-            
-            raise ValueError("token is required")
+            logging.debug("missing token")
+            return func(*args, **kwargs)
                 
         return wrapper
     return decorator
