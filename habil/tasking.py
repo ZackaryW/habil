@@ -9,7 +9,7 @@ from habil_map.habiMapResponse import HabiMapResponse
 
 class HabiTasking:
     @classmethod
-    def _from_res(cls, data: HabiMapResponse) -> 'HabiTasking':
+    def _from_res(cls, data: HabiMapResponse, token=None) -> 'HabiTasking':
         if isinstance(data, HabiMapResponse):
             method = "from_res"
             xtype = data.data.get("type",None)
@@ -53,7 +53,7 @@ class HabiTasking:
         
         tasks = []
         for task_raw in tasks_raw:
-            task = cls._from_res(task_raw)
+            task = cls._from_res(task_raw, token=token)
             if task is not None:
                 tasks.append(task)
         return tasks
