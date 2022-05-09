@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-from datetime import datetime
-from habil_base.exceptions import HabiRequestException
+from datetime import datetime, timedelta
+from types import MappingProxyType
+from habil_base.exceptions import HabiLocalNotFoundException, HabiRequestException
 from habil.sub import HabiSubElement
 from habil_base.habiToken import token_required
 import habil_case
@@ -17,28 +18,44 @@ class HabiTagMeta:
     def is_time_to_pull(cls):
         if cls.LAST_PULL is None:
             return True
-        return datetime.utcnow() - cls.LAST_PULL > datetime.timedelta(seconds=cls.PULL_INTERVAL)
+        return datetime.utcnow() - cls.LAST_PULL > timedelta(seconds=cls.PULL_INTERVAL)
 
 @dataclass(frozen=True)
 class HabiTag(HabiSubElement):
 
     @classmethod
-    @token_required()
+    @token_required(dig_deep=True)
     def get(cls, id: str, token=None, force_pull : bool = False) -> 'HabiSubElement':
         if HabiTagMeta.is_time_to_pull():
             force_pull = True
 
+        if force_pull:
+            cls.get_all(token=token)
+        
+        if id not in cls._instances[cls]:
+            raise HabiLocalNotFoundException(
+                f"Tag with id {id} not found in local cache."
+            )
+        
+        return cls._instances[cls][id]
+    
+
+    @classmethod
+    @token_required(dig_deep=True)
+    def get_all(cls, token=None, force_pull : bool = True) -> list:
+        if HabiTagMeta.is_time_to_pull():
+            force_pull = True
+        
         if cls not in cls._instances:
             cls._instances[cls] = {}
-            
-        if id in cls._instances[cls] and not force_pull:
-            return cls._instances[cls][id]
         
-        res = habil_case.tag.get_a_users_tags(
-            headers=token,
-            tagId=id
-        )
+        if not(len(cls._instances[cls]) == 0 or force_pull):
+            return MappingProxyType(cls._instances[cls])
 
+        res = habil_case.tag.get_a_users_tags(
+            headers=token
+        )
+        
         if not res.success:
             raise HabiRequestException(res)
 
@@ -51,4 +68,4 @@ class HabiTag(HabiSubElement):
                 instance._local_update(**element)
 
         HabiTagMeta.set_timer()
-        return cls._instances[cls][id]
+        return MappingProxyType(cls._instances[cls])
