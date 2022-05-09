@@ -53,6 +53,7 @@ class HabiMapReturnParam(HabiMapAttr):
     func : typing.Callable = None
     rename_to : str = None
     need_rename : bool = False
+    to_repo :bool = False
 
     def __post_init__(self):
         if "." not in self.name:

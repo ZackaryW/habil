@@ -74,9 +74,29 @@ class HabiMapResponse(FrozenClass):
             val = ret.validate(val)
             if ret.rename_to is not None:
                 key = ret.rename_to
-            object.__setattr__(self, key, val)
+
+            if not ret.to_repo:
+                object.__setattr__(self, key, val)
+                continue
+                
+            if not hasattr(self, "repo"):
+                self.repo = {}
+
+            self.repo[ret.to_repo] = val
+        
+
+        #repr
+        self._repr = self._gen_repr()
 
         return self._freeze()
+
+    def _gen_repr(self):
+        ret_dict = {k:v for k,v in self.__dict__.items() if not k.startswith("_")}
+        ret_dict.pop("raw_data", None)
+        ret_dict.pop("raw", None)
+        ret_dict.pop("json_data", None)
+        ret_dict = "\n".join(f"{k}={v}" for k,v in ret_dict.items())
+        return f"{self.__class__.__name__}({ret_dict})"
 
     def _dig(self, key : str, val) -> typing.Any:
         keys = key.split(".")
@@ -99,12 +119,7 @@ class HabiMapResponse(FrozenClass):
         return val
 
     def __repr__(self):
-        ret_dict = {k:v for k,v in self.__dict__.items() if not k.startswith("_")}
-        ret_dict.pop("raw_data", None)
-        ret_dict.pop("raw", None)
-        ret_dict.pop("json_data", None)
-        ret_dict = "\n".join(f"{k}={v}" for k,v in ret_dict.items())
-        return f"{self.__class__.__name__}({ret_dict})"
+        return self._repr
 
     def __str__(self):
         return f"{self.__class__.__name__}({self.url} @ {self.timestamp})"
