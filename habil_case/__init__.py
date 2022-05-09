@@ -5,7 +5,7 @@ from habil_map import HabiMapCase as _HabiMapCase
 
 import habil_case.tag as tag
 import habil_case.task as task
-
+import habil_case.user as user
 
 #ANCHOR bug report
 
