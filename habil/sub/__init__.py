@@ -33,5 +33,6 @@ class HabiSubElement(HabiUItem):
     @classmethod
     def get_all(cls) -> typing.List['HabiSubElement']:
         if cls not in cls._instances:
-            return {}
+            cls._instances[cls] = {}
+        
         return MappingProxyType(cls._instances[cls])
