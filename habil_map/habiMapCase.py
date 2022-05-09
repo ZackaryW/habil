@@ -86,6 +86,8 @@ class HabiMapCase:
         # check missing
         for k, v in self.path_params.items():
             v : HabiMapPathParam
+            if k in body:
+                continue
             if v.optional:
                 continue
             if k not in path and v.default is None:
@@ -95,6 +97,8 @@ class HabiMapCase:
 
         for k, v in self.body_params.items():
             v : HabiMapBodyParam
+            if k in body:
+                continue
             if v.optional:
                 continue
             if k not in body and v.default is None:
@@ -115,7 +119,12 @@ class HabiMapCase:
         **kwargs) -> HabiMapResponse:
         if caller_func is None:
             caller_func = get_caller_name()
-        return self.request(headers, extract_data, only_in_model, caller_func=caller_func, **kwargs)
+        return self.request(
+            headers=headers, 
+            extract_data=extract_data, 
+            only_in_model=only_in_model, 
+            caller_func=caller_func, 
+            **kwargs)
 
     def request(
         self,
