@@ -82,7 +82,7 @@ class HabiMapResponse(FrozenClass):
             if not hasattr(self, "repo"):
                 self.repo = {}
 
-            self.repo[ret.to_repo] = val
+            self.repo[key] = val
         
 
         #repr
