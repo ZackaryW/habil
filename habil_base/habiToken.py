@@ -66,7 +66,7 @@ class HabiToken:
 # ANCHOR global token 
 _SINGLETON_INSTANCE = None
 
-def token_required(glob :bool = True, dig:bool = True):
+def token_required(glob :bool = True, dig:bool = True, dig_deep:bool = False) -> callable:
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -78,7 +78,7 @@ def token_required(glob :bool = True, dig:bool = True):
             elif not glob and not dig:
                 raise ValueError("token is required")
 
-            if dig and (token:=caller_getattr("token", None)) is not None:
+            if dig and (token:=caller_getattr("token", default=None, deep=False)) is not None:
                 if isinstance(token, HabiToken):
                     token = token.headers
                 kwargs["token"] = token
@@ -91,6 +91,13 @@ def token_required(glob :bool = True, dig:bool = True):
                 kwargs["token"] = _SINGLETON_INSTANCE.headers
                 return func(*args, **kwargs)
             
-            return
+            if dig_deep and (token:=caller_getattr("token", default=None, deep=True)) is not None:
+                if isinstance(token, HabiToken):
+                    token = token.headers
+                kwargs["token"] = token
+                return func(*args, **kwargs)
+            
+            raise ValueError("token is required")
+                
         return wrapper
     return decorator
