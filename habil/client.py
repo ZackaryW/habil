@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import dataclasses
 import typing
+from habil.profile import HabiStatBox
 from habil.sub.tag import HabiTag, HabiTagMeta
 from habil_base.exceptions import HabiMissingTokenException
 from habil_base.habiToken import HabiToken
@@ -22,7 +23,6 @@ class HabiClient(FrozenClass):
         self.token : HabiToken = token
         self._freeze()
 
-    
 
     def get(self, category : int, id : str):
         if category == self.TASK:
@@ -38,6 +38,10 @@ class HabiClient(FrozenClass):
         return cls(token=token)
 
     # ANCHOR dynamic properties
+    @property
+    def stats(self):
+        return HabiStatBox.get(token=self.token)
+
     @property
     def tasks(self):
         HabiTag.get_all(token=self.token)
