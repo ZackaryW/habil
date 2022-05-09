@@ -1,5 +1,6 @@
 
 from dataclasses import dataclass
+import dataclasses
 import typing
 
 @dataclass(frozen=True)
@@ -50,6 +51,16 @@ class HabiMapBodyParam(HabiMapSendParam):
 @dataclass(frozen=True)
 class HabiMapReturnParam(HabiMapAttr):
     func : typing.Callable = None
+    rename_to : str = None
+    need_rename : bool = False
+
+    def __post_init__(self):
+        if "." not in self.name:
+            return
+        if self.rename_to is None:
+            raise ValueError("rename_to must be set")
+        
+        object.__setattr__(self, "need_rename", True)
 
     def validate(self, value):
         value = super().validate(value)
