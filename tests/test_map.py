@@ -25,10 +25,10 @@ class t_case(t_case_base):
         self.assertTrue(self.case_res.status)
 
 class t_case_user(t_case_base):
-    def test_get_user(self):
+    def test_map_get_user(self):
         self.case_res = habil_case.user.get_user_profile(headers=self.token)
 
-    def test_get_user_only_stats(self):
+    def test_map_get_user_only_stats(self):
         self.case_res = habil_case.user.get_user_profile_stats(headers=self.token)
         self.assertGetAttr(self.case_res.repo, "job",["warrior", "rogue", "mage", "healer"])
         self.assertGetAttrMin(self.case_res.repo, "con", 0, allow_equal=True)
