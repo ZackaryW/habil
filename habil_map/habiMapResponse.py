@@ -100,8 +100,6 @@ class HabiMapResponse(FrozenClass):
 
     def _dig(self, key : str, val) -> typing.Any:
         keys = key.split(".")
-        if len(keys) == 1:
-            return val
         
         for k in keys:
             if isinstance(val, dict):
