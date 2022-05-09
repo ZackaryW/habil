@@ -11,3 +11,5 @@ class HabiRequestException(HabiBaseException):
 class HabiRequestRateLimited(HabiBaseException):
     pass
 
+class HabiLocalNotFoundException(HabiBaseException):
+    pass
