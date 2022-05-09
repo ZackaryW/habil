@@ -44,6 +44,10 @@ class HabiClient(FrozenClass):
         return HabiTasking.get_all(token=self.token)
     
     @property
+    def tags(self):
+        return HabiTag.get_all(token=self.token)
+
+    @property
     def character(self):
         raise NotImplementedError
 
