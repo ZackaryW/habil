@@ -122,7 +122,6 @@ class HabiMapCase:
         return self.request(
             headers=headers, 
             extract_data=extract_data, 
-            only_in_model=only_in_model, 
             caller_func=caller_func, 
             **kwargs)
 
@@ -130,7 +129,6 @@ class HabiMapCase:
         self,
         headers: typing.Dict[str, str] = None,
         extract_data : bool = True,
-        only_in_model: bool = True,
         caller_func : str  = None,
         **kwargs
     ) -> HabiMapResponse:
@@ -143,6 +141,9 @@ class HabiMapCase:
 
         if self.token_required and headers is None:
             raise ValueError("token is required")
+
+        if hasattr(headers, "headers"):
+            headers = headers.headers
 
         kwargs = {
             "url" : url,
@@ -157,7 +158,7 @@ class HabiMapCase:
         res : requests.Response = self.request_method(**kwargs)
         HabiMapMeta.parse_rate_limit_state(res)
 
-        hres = HabiMapResponse.parse(res, self.ret_params, extract_data, only_in_model)
+        hres = HabiMapResponse.parse(res, self.ret_params, extract_data)
         HabiMapMeta._log(res=hres, caller_func=caller_func)
         return hres
 
