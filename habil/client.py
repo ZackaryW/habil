@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 import dataclasses
 import typing
-from habil.sub.tag import HabiTagMeta
+from habil.sub.tag import HabiTag, HabiTagMeta
 from habil_base.exceptions import HabiMissingTokenException
 from habil_base.habiToken import HabiToken
 from habil.tasking import HabiTasking
 from habil_utils import FrozenClass
 from habil_map.habiMapMeta import HabiMapMeta
 
-class Client(FrozenClass):
+class HabiClient(FrozenClass):
     TASK = 0
     #TAG = 1
 
@@ -22,13 +22,7 @@ class Client(FrozenClass):
         self.token : HabiToken = token
         self._freeze()
 
-    @property
-    def tasks(self):
-        return HabiTasking.get_all(token=self.token)
     
-    @property
-    def character(self):
-        raise NotImplementedError
 
     def get(self, category : int, id : str):
         if category == self.TASK:
@@ -37,6 +31,21 @@ class Client(FrozenClass):
     def create(self, category : int, **kwargs):
         raise NotImplementedError
 
+    # ANCHOR classmethods
+    @classmethod
+    def login(cls, username : str, password : str, appid : str=None, set_global : bool = False) -> 'HabiClient':
+        token = HabiToken.login(username=username, password=password, appid=appid, set_global=set_global)
+        return cls(token=token)
+
+    # ANCHOR dynamic properties
+    @property
+    def tasks(self):
+        HabiTag.get_all(token=self.token)
+        return HabiTasking.get_all(token=self.token)
+    
+    @property
+    def character(self):
+        raise NotImplementedError
 
     # ANCHOR config properties
     @property
