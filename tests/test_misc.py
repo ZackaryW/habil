@@ -14,9 +14,6 @@ class t_map_cases(unittest.TestCase):
     def setUp(self) -> None:
         HabiToken.from_json("config.json", set_global=True)
 
-    def test_api_up(self):
-        self.assertTrue(habil_case.get_api_status.request().status)
-
     def test_rate_limit(self):
         """
         do not use this test too often
