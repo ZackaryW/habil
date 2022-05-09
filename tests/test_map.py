@@ -29,16 +29,16 @@ class t_case_user(t_case_base):
         self.case_res = habil_case.user.get_user_profile(headers=self.token)
 
     def test_get_user_only_stats(self):
-        self.case_res = habil_case.user.get_user_profile(headers=self.token, userFields="stats")
-        self.assertGetAttr(self.case_res, "stat_class",["warrior", "rogue", "mage", "healer"])
-        self.assertGetAttrMin(self.case_res, "stat_con", 0, allow_equal=True)
-        self.assertGetAttrMin(self.case_res, "stat_str", 0, allow_equal=True)
-        self.assertGetAttrMin(self.case_res, "stat_int", 0, allow_equal=True)
-        self.assertGetAttrMin(self.case_res, "stat_per", 0, allow_equal=True)
-        self.assertGetAttrMin(self.case_res, "stat_lvl", 0)
-        self.assertGetAttrMin(self.case_res, "stat_exp", 0)
-        self.assertGetAttrMin(self.case_res, "stat_hp", 0, allow_equal=True)
-        self.assertGetAttrMax(self.case_res, "stat_hp", 50, allow_equal=True)
-        self.assertGetAttrMin(self.case_res, "stat_mp", 0, allow_equal=True)
+        self.case_res = habil_case.user.get_user_profile_stats(headers=self.token)
+        self.assertGetAttr(self.case_res.repo, "job",["warrior", "rogue", "mage", "healer"])
+        self.assertGetAttrMin(self.case_res.repo, "con", 0, allow_equal=True)
+        self.assertGetAttrMin(self.case_res.repo, "str", 0, allow_equal=True)
+        self.assertGetAttrMin(self.case_res.repo, "int", 0, allow_equal=True)
+        self.assertGetAttrMin(self.case_res.repo, "per", 0, allow_equal=True)
+        self.assertGetAttrMin(self.case_res.repo, "lvl", 0)
+        self.assertGetAttrMin(self.case_res.repo, "exp", 0)
+        self.assertGetAttrMin(self.case_res.repo, "hp", 0, allow_equal=True)
+        self.assertGetAttrMax(self.case_res.repo, "hp", 50, allow_equal=True)
+        self.assertGetAttrMin(self.case_res.repo, "mp", 0, allow_equal=True)
 
         
