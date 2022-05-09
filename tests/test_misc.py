@@ -28,17 +28,17 @@ class t_map_cases(unittest.TestCase):
             self.assertTrue(habil_case.get_api_status.request().status)
     
     def test_get_all_tasks(self):
-        from habil import HabiTask
+        from habil import HabiTasking
 
-        tasks = HabiTask.get_all()
+        tasks = HabiTasking.get_all()
         pprint(tasks)
         
 
     def test_get_and_update_one_task(self):
-        from habil import HabiTask
+        from habil import HabiTasking
         from zxutil.bridge import Bridge
         bridge= Bridge("config.json")
-        task = HabiTask.get(id=bridge.test_habit)
+        task = HabiTasking.get(id=bridge.test_habit)
         print(repr(task))
         # create random string
         import random
@@ -64,10 +64,10 @@ class t_map_cases(unittest.TestCase):
         pprint(HabiMapMeta.get_log(caller="good_habit"))
 
     def test_score_task(self):
-        from habil import HabiTask
+        from habil import HabiTasking
         from zxutil.bridge import Bridge
         bridge= Bridge("config.json")
-        habit = HabiTask.get(id=bridge.test_habit)
+        habit = HabiTasking.get(id=bridge.test_habit)
         pprint(HabiHabit.get_raw(item=habit.id).json_data)
         habit = habit.score_task(True)
         print("______________________________")

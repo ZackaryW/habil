@@ -7,9 +7,9 @@ from habil_base.habiToken import token_required
 import habil_case
 from habil_map.habiMapResponse import HabiMapResponse
 
-class HabiTask:
+class HabiTasking:
     @classmethod
-    def _from_res(cls, data: HabiMapResponse) -> 'HabiTask':
+    def _from_res(cls, data: HabiMapResponse) -> 'HabiTasking':
         if isinstance(data, HabiMapResponse):
             method = "from_res"
             xtype = data.data.get("type",None)
