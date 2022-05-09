@@ -2,7 +2,17 @@ import typing
 import unittest
 
 class base_case(unittest.TestCase):
+    def get_val(self, key : str, obj) -> typing.Any:
+        if isinstance(obj, dict):
+            cval = obj.get(key, None)
+        else:
+            cval = getattr(obj, key, None)
+        return cval
+
     def assertHasAttr(self, obj, attr):
+        if isinstance(obj, typing.Iterable):
+            self.assertIn(attr, obj)
+            return
         self.assertTrue(hasattr(obj, attr))
 
     def assertGetAttr(self, obj, attr, val):
@@ -10,8 +20,8 @@ class base_case(unittest.TestCase):
         
         if val is None:
             return
-        
-        cval = getattr(obj, attr, None)
+
+        cval = self.get_val(attr, obj)
 
         if cval is None:
             self.fail("{} is None".format(attr))
@@ -23,7 +33,7 @@ class base_case(unittest.TestCase):
 
     def assertGetAttrMin(self, obj, attr, min, allow_equal=False):
         self.assertHasAttr(obj, attr)
-        val = getattr(obj, attr, None)
+        val = self.get_val(attr, obj)
         if val is None:
             self.fail("{} is None".format(attr))
         
@@ -34,7 +44,7 @@ class base_case(unittest.TestCase):
 
     def assertGetAttrMax(self, obj, attr, max, allow_equal=False):
         self.assertHasAttr(obj, attr)
-        val = getattr(obj, attr, None)
+        val = self.get_val(attr, obj)
         if val is None:
             self.fail("{} is None".format(attr))
 
