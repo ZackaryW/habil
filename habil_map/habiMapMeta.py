@@ -9,7 +9,7 @@ class HabiMapMeta:
     MIN_TRIGGER_RATE_LIMIT = 1
     RATE_LIMIT_REMAINING = None
     LOGS = {}
-    MAX_HOLD_LOGS = 10
+    MAX_HOLD_LOGS = 50
 
     @classmethod
     def parse_rate_limit_state(cls, res: requests.Response):
@@ -44,7 +44,7 @@ class HabiMapMeta:
         
     @classmethod
     def _log(cls, res : HabiMapResponse, caller_func ):
-        cls.LOGS[f"{str(caller_func).lower()} {int(res.timestamp.timestamp()*1000)}"] = res
+        cls.LOGS[str(caller_func).lower()] = res
         while len(cls.LOGS) > cls.MAX_HOLD_LOGS:
             cls.LOGS.popitem(last=False)
 
@@ -53,12 +53,13 @@ class HabiMapMeta:
         return cls.LOGS
 
     @classmethod
-    def get_log(cls, caller:str =None,timestamp : int=None,**kwargs):
-        
+    def get_log(cls, caller:str =None,**kwargs):
+        if caller is None:
+            return None
+        if caller in cls.LOGS:
+            return cls.LOGS[caller]
         for key, val in cls.LOGS.items():
             if caller is not None and isinstance(caller, str) and str(caller).lower() in key:
-                return val
-            if timestamp is not None and isinstance(timestamp, int) and str(timestamp) in key:
                 return val
             if any(getattr(val, k, None) == v for k, v in kwargs.items()):
                 return val
