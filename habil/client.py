@@ -10,8 +10,7 @@ from habil_utils import FrozenClass
 from habil_map.habiMapMeta import HabiMapMeta
 
 class HabiClient(FrozenClass):
-    TASK = 0
-    #TAG = 1
+    
 
     def __init__(self, token : typing.Union[HabiToken, dict] = None):
         if token is None:
@@ -23,18 +22,38 @@ class HabiClient(FrozenClass):
         self.token : HabiToken = token
         self._freeze()
 
+    TASK = 0
+    TAG = 1
+    REWARD = 2
+    HABIT = 3
+    DAILY = 4
+    TODO = 5
 
     def get(self, category : int, id : str):
-        if category == self.TASK:
-            return HabiTasking.get(token=self.token, taskId=id)
+        match category:
+            case self.TASK: return HabiTasking.get(token=self.token, taskId=id)
+            case self.TAG: return HabiTag.get(token=self.token, tagId=id)
+            case _: raise ValueError(f"Unknown category {category}")
     
-    def create(self, category : int, **kwargs):
-        raise NotImplementedError
+    def make(self, category : int, **kwargs):
+        match category:
+            case self.TASK: raise ValueError("Tasks is a generic category, please use REWARD, HABIT, DAILY, 2DO")
+            case self.TAG: return HabiTag.create(token=self.token, name=kwargs.get("name"))
+            case _: raise ValueError(f"Unknown category {category}")
 
+    
     # ANCHOR classmethods
     @classmethod
     def login(cls, username : str, password : str, appid : str=None, set_global : bool = False) -> 'HabiClient':
         token = HabiToken.login(username=username, password=password, appid=appid, set_global=set_global)
+        return cls(token=token)
+
+    @classmethod
+    def create(cls, user_id : str =None, api_token : str =None, app_id : str =None, json_path: str =None) -> 'HabiClient':
+        if json_path is not None:
+            token = HabiToken.from_json(json_path)
+        else:
+            token = HabiToken(user_id=user_id, api_token=api_token, app_id=app_id)
         return cls(token=token)
 
     # ANCHOR dynamic properties
