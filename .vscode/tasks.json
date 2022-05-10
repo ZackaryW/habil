@@ -1,0 +1,12 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "create pdoc",
+            "type": "shell",
+            "command": "pdoc -o docs habil habil_case habil_ext habil_base habil_map habil_utils"
+        }
+    ]
+}
