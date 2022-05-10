@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import logging
 import uuid
 from habil_base.habiToken import token_required
 from habil_base.habiUItem import HabiUItem
@@ -15,16 +16,46 @@ class HabiStatBox(HabiUItem):
     str : int
     con : int
     per : int
-    int : int
+    inte : int
 
     @classmethod
-    @token_required()
+    @token_required(throw=True)
     def get(cls, token=None):
         res = habil_case.user.get_user_profile_stats(headers=token)
         if res.fail:
             raise HabiRequestException(res)
         token : dict
-        return cls.from_dict(**res.repo, _raw_=res, id=token.get("x-api-user"))
+        return cls.from_dict(**res.repo, raw=res, id=token.get("x-api-user"))
+
+    @token_required(throw=True)
+    def update(self,
+        lvl : int = None,
+        exp : int = None,
+        hp : int = None,
+        mp : int = None,
+        gold : int = None,
+        str : int = None,
+        con : int = None,
+        per : int = None,
+        inte : int = None,
+        set :bool = False,
+    token=None):
+        skip = ("token", "self", "set")
+        changed = {k : v for k, v in locals().items() if (v is not None and k not in skip)}
+        if len(changed) == 0:
+            logging.warning("No stats to update for user %s", token.get("x-api-user"))
+            return None
+        if not set:
+            changed = {f"stat_{k}" : v + getattr(self, k) for k, v in changed.items()}
+
+        res = habil_case.user.update_user_profile(headers=token, **changed)
+        if res.fail:
+            raise HabiRequestException(res)
+
+        return self.from_dict(**res.repo, raw=res, id=token.get("x-api-user"))
+
+
+
 
 @dataclass(frozen=True)
 class HabiProfile(HabiUItem):
@@ -36,7 +67,7 @@ class HabiProfile(HabiUItem):
         res = habil_case.user.get_user_profile(headers=token)
         if res.fail:
             raise HabiRequestException(res)
-        stats = HabiStatBox.from_dict(**res.repo.get("stats"), _raw_=res, id=token.get("x-api-user"))
-        return cls.from_dict(_raw_=res, id=token.get("x-api-user"), stats=stats)
+        stats = HabiStatBox.from_dict(**res.repo.get("stats"), raw=res, id=token.get("x-api-user"))
+        return cls.from_dict(raw=res, id=token.get("x-api-user"), stats=stats)
 
     
