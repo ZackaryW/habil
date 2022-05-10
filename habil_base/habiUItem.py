@@ -37,7 +37,7 @@ class HabiUMeta(type):
         fs = dataclasses.fields(cls)
         return [f.name for f in fs]
     
-    def delete(cls, id):
+    def deleteins(cls, id):
         if cls not in cls._instances:
             raise TypeError("No instances of {}".format(cls))
         if id not in cls._instances[cls]:
