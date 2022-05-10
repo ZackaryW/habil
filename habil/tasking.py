@@ -22,13 +22,13 @@ class HabiTasking:
         if xtype is None:
             raise ValueError("type is missing")
         if xtype == "daily":
-            return getattr(HabiDaily, method)(data)
+            return getattr(HabiDaily, method)(**data)
         elif xtype == "habit":
-            return getattr(HabiHabit, method)(data)
+            return getattr(HabiHabit, method)(**data)
         elif xtype == "reward":
-            return getattr(HabiReward, method)(data)
+            return getattr(HabiReward, method)(**data)
         elif xtype == "todo":
-            return getattr(HabiTodo, method)(data)
+            return getattr(HabiTodo, method)(**data)
         else:
             raise ValueError(f"unknown type: {xtype}")
 
