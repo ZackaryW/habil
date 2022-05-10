@@ -78,11 +78,8 @@ class HabiMapResponse(FrozenClass):
             if not ret.to_repo:
                 object.__setattr__(self, key, val)
                 continue
-                
-            if not hasattr(self, "repo"):
-                self.repo = {}
-
-            self.repo[key] = val
+            
+            self._bury(key, val)
 
         return self._freeze()
         
@@ -97,6 +94,26 @@ class HabiMapResponse(FrozenClass):
         ret_dict.pop("json_data", None)
         ret_dict = "\n".join(f"{k}={v}" for k,v in ret_dict.items())
         return f"{self.__class__.__name__}({ret_dict})"
+
+    def _bury(self, key :str, val):
+        if not hasattr(self, "repo"):
+                self.repo = {}
+
+        keys = key.split(".")
+
+        if len(keys) == 1:
+            self.repo[key] = val
+            return
+
+        focus = self.repo
+
+        for k in keys[:-1]:
+            if k not in focus:
+                focus[k] = {}
+            focus = focus[k]
+
+        focus[keys[-1]] = val
+            
 
     def _dig(self, key : str, val) -> typing.Any:
         keys = key.split(".")
