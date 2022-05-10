@@ -60,6 +60,29 @@ class AHabiTask(HabiUItem):
             raise HabiRequestException(res)
         return self.get(id=self.id, token=token)
 
+    # ANCHOR tag operations
+    def has_tag(self,name: str=None, id: str=None) -> bool:
+        for tag in self.tags:
+            tag : HabiTag
+            if tag.name == name or tag.id == id:
+                return True
+        return False
+
+    @token_required()
+    def add_tag(self, tag: HabiTag, token=None) -> 'AHabiTask':
+        res = habil_case.task.add_a_tag_to_a_task(headers=token, taskId=self.id, tagId=tag.id)
+        if res.fail:
+            raise HabiRequestException(res)
+        return self.from_res(res)
+
+    @token_required()
+    def remove_tag(self, tag: HabiTag, token=None) -> 'AHabiTask':
+        res = habil_case.task.delete_a_tag_from_a_task(headers=token, taskId=self.id, tagId=tag.id)
+        if res.fail:
+            raise HabiRequestException(res)
+        return self.from_res(res)
+
+
 @dataclass(frozen=True)
 class CompletableTask(AHabiTask):
     completed : bool
