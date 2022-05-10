@@ -1,4 +1,7 @@
 # habil
+a lite wrapper for habitica api
+currently, it does not support any community features
+
 ## requirements
 requests
 ## examples
