@@ -7,6 +7,25 @@ from habil_utils import FrozenClass
 
 @dataclass(init=False)
 class HabiMapResponse(FrozenClass):
+    """
+    a simple wrapper for requests.Response
+
+    Dataclass Vars:\n
+        raw : requests.Response\n
+        url : str - called url\n
+        reason : str\n
+        status_code : int\n
+        success : bool\n
+        is_dict : bool\n
+        is_json : bool\n
+        has_data : bool\n
+        timestamp : datetime.datetime\n
+        request_time : float\n
+        raw_data : typing.Any\n
+        json_data : typing.Any\n
+        repo : typing.Dict[str, typing.Any]\n
+
+    """
     url : str
     is_json : bool
     json_data : typing.Optional[dict]
