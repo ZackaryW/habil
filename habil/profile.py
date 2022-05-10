@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 import uuid
 from habil_base.habiToken import token_required
-from habil_base.habiXItem import HabiXItem
+from habil_base.habiUItem import HabiUItem
 import habil_case
 from habil_base.exceptions import HabiRequestException
 @dataclass(frozen=True)
-class HabiStatBox(HabiXItem):
+class HabiStatBox(HabiUItem):
     job : str
     lvl : int
     exp : int
@@ -27,7 +27,7 @@ class HabiStatBox(HabiXItem):
         return cls.from_dict(**res.repo, _raw_=res, id=token.get("x-api-user"))
 
 @dataclass(frozen=True)
-class HabiProfile(HabiXItem):
+class HabiProfile(HabiUItem):
     stats : HabiStatBox
 
     @classmethod

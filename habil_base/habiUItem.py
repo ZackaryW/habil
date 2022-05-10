@@ -78,7 +78,7 @@ class HabiUItem(metaclass=HabiUMeta):
 
     @property
     def expired(self) -> bool:
-        return self.__class__._instances[self.__class__][self.id] != self
+        return self.__class__._instances[self.__class__][self.id] is not self
 
     # ANCHOR Classmethods
     @classmethod
@@ -102,3 +102,9 @@ class HabiUItem(metaclass=HabiUMeta):
 
         passed_dict = {k: v for k, v in kwargs.items() if k in cls.fields()}
         return cls(**passed_dict, _raw_=res)
+
+    def __eq__(self, other):
+        if not isinstance(other, HabiUItem):
+            return False
+        
+        return self is other
