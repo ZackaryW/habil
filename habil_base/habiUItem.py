@@ -55,6 +55,11 @@ class HabiUItem(metaclass=HabiUMeta):
 
     @property
     def expired(self) -> bool:
+        if self.__class__ not in self.__class__._instances:
+            return False
+        if self.id not in self.__class__._instances[self.__class__]:
+            return False
+
         return self.__class__._instances[self.__class__][self.id] is not self
 
     # ANCHOR Classmethods
