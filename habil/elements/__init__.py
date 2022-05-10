@@ -11,7 +11,7 @@ class AHabiTask(HabiUItem):
     createdAt : str
     updatedAt : str
     text : str
-    tags : typing.List[str]
+    tags : typing.Tuple[str]
     _type = "task"
 
     def __post_init__(self):
@@ -19,7 +19,7 @@ class AHabiTask(HabiUItem):
         for tag in self.tags:
             atag = HabiTag.get(id=tag)
             tag_objs.append(atag)
-        object.__setattr__(self, "tags", tag_objs)
+        object.__setattr__(self, "tags", tuple(tag_objs)) # make immutable
 
     def __repr__(self) -> str:
         return "{}({})".format(self.__class__.__name__, self.text)
