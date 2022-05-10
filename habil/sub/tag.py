@@ -22,6 +22,16 @@ class HabiTagMeta:
 
 @dataclass(frozen=True)
 class HabiTag(HabiSubElement):
+    @classmethod
+    @token_required()
+    def create(cls, name:str, token=None):
+        res = habil_case.tag.create_new_tag(name=name, headers=token)
+        if res.fail:
+            raise HabiRequestException(res)
+        return cls(
+            id=res.id,
+            name=res.name
+        )
 
     @classmethod
     @token_required(dig_deep=True)
