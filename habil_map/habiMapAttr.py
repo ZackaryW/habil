@@ -5,6 +5,9 @@ import typing
 
 @dataclass(frozen=True)
 class HabiMapAttr:
+    """
+    
+    """
     name : str
     xtype : typing.Type = None
     
