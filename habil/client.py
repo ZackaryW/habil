@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import dataclasses
 import typing
-from habil.profile import HabiProfile, HabiStatBox
+from habil.other.profile import HabiProfile, HabiStatBox
 from habil.sub.tag import HabiTag, HabiTagMeta
 from habil_base.exceptions import HabiMissingTokenException
 from habil_base.habiToken import HabiToken
