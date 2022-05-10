@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import dataclasses
 import typing
-from habil.profile import HabiStatBox
+from habil.profile import HabiProfile, HabiStatBox
 from habil.sub.tag import HabiTag, HabiTagMeta
 from habil_base.exceptions import HabiMissingTokenException
 from habil_base.habiToken import HabiToken
@@ -71,8 +71,8 @@ class HabiClient(FrozenClass):
         return HabiTag.get_all(token=self.token)
 
     @property
-    def character(self):
-        raise NotImplementedError
+    def profile(self):
+        return HabiProfile.get(token=self.token)
 
     # ANCHOR config properties
     @property
