@@ -1,3 +1,7 @@
+"""
+Attr classes are dataclasses which represent a single attribute within HabiMapCase
+
+"""
 
 from dataclasses import dataclass
 import dataclasses
@@ -5,9 +9,6 @@ import typing
 
 @dataclass(frozen=True)
 class HabiMapAttr:
-    """
-    
-    """
     name : str
     xtype : typing.Type = None
     rename_to : str = None
@@ -25,6 +26,9 @@ class HabiMapAttr:
 
 @dataclass(frozen=True)
 class HabiMapSendParam(HabiMapAttr):
+    """
+    generic class for path and body params
+    """
     optional : bool = False
     xrange : typing.Iterable = None
     xmin : int = None
@@ -46,11 +50,17 @@ class HabiMapSendParam(HabiMapAttr):
 
 @dataclass(frozen=True)
 class HabiMapPathParam(HabiMapSendParam):
-    pass
+    """
+    class for path params\n
+    requests.method(params)
+    """
 
 @dataclass(frozen=True)
 class HabiMapBodyParam(HabiMapSendParam):
-    pass
+    """
+    class for body params\n
+    requests.method(json)
+    """
 
 @dataclass(frozen=True)
 class HabiMapReturnParam(HabiMapAttr):

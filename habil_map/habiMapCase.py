@@ -10,6 +10,9 @@ from habil_map.habiMapMeta import HabiMapMeta
 
 @dataclass(frozen=True, init=False)
 class HabiMapCase:
+    """
+    an abstraction of a single api call\n
+    """
     url : str
     
     path_params : typing.Dict[str, HabiMapAttr]
