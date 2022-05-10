@@ -64,7 +64,7 @@ class HabiMapResponse(FrozenClass):
 
         if not extract_data:
             return self._freeze()
-
+        
         for key, ret in ret_params.items():
             key : str
             ret : HabiMapReturnParam
@@ -83,12 +83,12 @@ class HabiMapResponse(FrozenClass):
                 self.repo = {}
 
             self.repo[key] = val
-        
-
-        #repr
-        self._repr = self._gen_repr()
 
         return self._freeze()
+        
+    def _freeze(self):
+        self._repr = self._gen_repr()
+        super()._freeze()
 
     def _gen_repr(self):
         ret_dict = {k:v for k,v in self.__dict__.items() if not k.startswith("_")}
