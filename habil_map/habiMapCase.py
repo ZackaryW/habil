@@ -76,10 +76,14 @@ class HabiMapCase:
         # parse
         for k, v in kwargs.items():
             if k in self.path_params:
-                path[k] = self.path_params[k].validate(v)
+                attr : HabiMapAttr = self.path_params[k]
+                k = attr.rename_to if attr.rename_to is not None else k
+                path[k] = attr.validate(v)
         
             if k in self.body_params:
-                body[k] = self.body_params[k].validate(v)
+                attr : HabiMapAttr = self.body_params[k]
+                k = attr.rename_to if attr.rename_to is not None else k
+                body[k] = attr.validate(v)
 
         # check missing
         for k, v in self.path_params.items():
