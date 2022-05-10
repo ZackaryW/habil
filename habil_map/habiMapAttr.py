@@ -10,7 +10,8 @@ class HabiMapAttr:
     """
     name : str
     xtype : typing.Type = None
-    
+    rename_to : str = None
+
     def __eq__(self, __o: object) -> bool:
         if not isinstance(__o, HabiMapAttr):
             return False
@@ -54,7 +55,7 @@ class HabiMapBodyParam(HabiMapSendParam):
 @dataclass(frozen=True)
 class HabiMapReturnParam(HabiMapAttr):
     func : typing.Callable = None
-    rename_to : str = None
+    
     need_rename : bool = False
     to_repo :bool = False
 
