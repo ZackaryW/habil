@@ -51,6 +51,8 @@ class AHabiTask(HabiUItem):
         res = habil_case.task.delete_a_task(headers=token, taskId=self.id, **kwargs)
         if not res.success:
             raise HabiRequestException(res)
+
+        self.__class__.deleteins(self.id)
         return True
 
     @token_required()
