@@ -1,3 +1,7 @@
+"""
+abstraction for api call request
+"""
+
 from habil_map.habiMapCase import HabiMapCase
 from habil_map.habiMapMeta import HabiMapMeta
 from habil_map.habiMapAttr import HabiMapPathParam as Path
