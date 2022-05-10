@@ -4,7 +4,7 @@ import functools
 import logging
 import habil_case
 from habil_utils import caller_getattr
-from habil_base.exceptions import HabiRequestException
+from habil_base.exceptions import HabiMissingTokenException, HabiRequestException
 @dataclass(frozen=True)
 class HabiToken:
     user_id : str
@@ -77,7 +77,7 @@ class HabiToken:
 # ANCHOR global token 
 _SINGLETON_INSTANCE = None
 
-def token_required(glob :bool = True, dig:bool = True, dig_deep:bool = False) -> callable:
+def token_required(glob :bool = True, dig:bool = True, dig_deep:bool = False, throw : bool = False) -> callable:
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -102,6 +102,9 @@ def token_required(glob :bool = True, dig:bool = True, dig_deep:bool = False) ->
                     return func(*args, **kwargs)
             
             logging.debug("missing token")
+            if throw:
+                raise HabiMissingTokenException("token is required [token_required]")
+
             return func(*args, **kwargs)
                 
         return wrapper
