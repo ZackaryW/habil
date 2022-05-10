@@ -21,11 +21,11 @@ class HabiStatBox(HabiUItem):
     @classmethod
     @token_required(throw=True)
     def get(cls, token=None):
-        res = habil_case.user.get_user_profile_stats(headers=token)
+        res = habil_case.user.get_user_profile_stats(headers=token, caller_func="HabiStatBox.get")
         if res.fail:
             raise HabiRequestException(res)
         token : dict
-        return cls.from_dict(**res.repo, raw=res, id=token.get("x-api-user"))
+        return cls.from_dict(**res.repo, id=token.get("x-api-user"))
 
     @token_required(throw=True)
     def update(self,
@@ -48,11 +48,11 @@ class HabiStatBox(HabiUItem):
         if not set:
             changed = {f"stat_{k}" : v + getattr(self, k) for k, v in changed.items()}
 
-        res = habil_case.user.update_user_profile(headers=token, **changed)
+        res = habil_case.user.update_user_profile(headers=token, **changed, caller_func="HabiStatBox.update")
         if res.fail:
             raise HabiRequestException(res)
 
-        return self.from_dict(**res.repo.get("stats"), raw=res, id=token.get("x-api-user"))
+        return self.from_dict(**res.repo.get("stats"), id=token.get("x-api-user"))
 
 
 @dataclass(frozen=True)
@@ -62,10 +62,10 @@ class HabiProfile(HabiUItem):
     @classmethod
     @token_required()
     def get(cls, token=None):
-        res = habil_case.user.get_user_profile(headers=token)
+        res = habil_case.user.get_user_profile(headers=token, caller_func="HabiProfile.get")
         if res.fail:
             raise HabiRequestException(res)
-        stats = HabiStatBox.from_dict(**res.repo.get("stats"), raw=res, id=token.get("x-api-user"))
-        return cls.from_dict(raw=res, id=token.get("x-api-user"), stats=stats)
+        stats = HabiStatBox.from_dict(**res.repo.get("stats"), id=token.get("x-api-user"))
+        return cls.from_dict(id=token.get("x-api-user"), stats=stats)
 
     

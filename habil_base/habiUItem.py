@@ -7,24 +7,15 @@ import typing
 
 class HabiUMeta(type):
     _instances = {}
-    _raw = {}
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
             cls._instances[cls] = {}
 
-        if cls not in cls._raw:
-            cls._raw[cls] = {}
-
         id = kwargs.get("id", None)
-        raw = kwargs.pop("_raw_", None)
         if id is None:
             raise TypeError("id must be provided")
 
-        if raw is None:
-            raise TypeError("_raw_ must be provided")
-
         cls._instances[cls][id] = super().__call__(*args, **kwargs)
-        cls._raw[cls][id] = datetime.now(), raw
 
         return cls._instances[cls][id]
 
@@ -34,20 +25,6 @@ class HabiUMeta(type):
         if id not in cls._instances[cls]:
             raise TypeError("No instance of {} with id {}".format(cls, id))
         return cls._instances[cls][id]
-
-    def get_raw(cls, item : typing.Union[str, 'HabiUItem'], only_raw=True):
-        if cls not in cls._raw:
-            raise TypeError("No raw of {}".format(cls))
-        if not isinstance(item,str) and hasattr(item, "id"):
-            item = item.id
-
-        if item not in cls._raw[cls]:
-            raise TypeError("No raw of {} with id {}".format(cls, item))
-
-        if only_raw:
-            return cls._raw[cls][item][1]
-
-        return cls._raw[cls][item]
 
     def exist(cls, id):
         if cls not in cls._instances:
@@ -82,17 +59,14 @@ class HabiUItem(metaclass=HabiUMeta):
 
     # ANCHOR Classmethods
     @classmethod
-    def from_dict(cls, raw =None, **data_dict):
+    def from_dict(cls, **data_dict):
         if not isinstance(data_dict, dict):
             raise TypeError("data_dict must be a dict")
         if not data_dict:
             raise TypeError("data_dict must not be empty")
-        
-        if raw is None:
-            raw = data_dict
 
         passed_dict = {k: v for k, v in data_dict.items() if k in cls.fields()}
-        return cls(**passed_dict, _raw_=raw)
+        return cls(**passed_dict)
 
     @classmethod
     def from_res(cls, res, **kwargs):
@@ -104,7 +78,7 @@ class HabiUItem(metaclass=HabiUMeta):
         kwargs.update(res.data)
 
         passed_dict = {k: v for k, v in kwargs.items() if k in cls.fields()}
-        return cls(**passed_dict, _raw_=res)
+        return cls(**passed_dict)
 
     def __eq__(self, other):
         if not isinstance(other, HabiUItem):

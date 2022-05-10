@@ -11,7 +11,7 @@ class HabiSubElement(HabiUItem):
     @classmethod
     def unpack(cls, data: dict) -> 'HabiSubElement':
         parsed_data = {k:v for k, v in data.items() if k in cls.fields()}
-        return cls(**parsed_data,_raw_=data)
+        return cls(**parsed_data)
 
     @abstractmethod
     def pack(self) -> dict:
