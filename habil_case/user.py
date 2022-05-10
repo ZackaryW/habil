@@ -80,17 +80,17 @@ get_user_profile_stats = HabiMapCase.get_case(
     Return(name="stats.mp", xtype=int, rename_to="mp", to_repo=True),
 )
 
-update_user_profile = HabiMapCase.post_case(
+update_user_profile = HabiMapCase.put_case(
     "https://habitica.com/api/v3/user",
-    Body(name="stat_lvl", xtype=str, rename_to="stats.lvl", optional=True),
-    Body(name="stat_exp", xtype=str, rename_to="stats.exp", optional=True),
-    Body(name="stat_hp", xtype=str, rename_to="stats.hp", optional=True),
-    Body(name="stat_gold", xtype=str, rename_to="stats.gold", optional=True),
-    Body(name="stat_str", xtype=str, rename_to="stats.str", optional=True),
-    Body(name="stat_inte", xtype=str, rename_to="stats.int", optional=True),
-    Body(name="stat_con", xtype=str, rename_to="stats.con", optional=True),
-    Body(name="stat_per", xtype=str, rename_to="stats.per", optional=True),
-    Body(name="stat_mp", xtype=str, rename_to="stats.mp", optional=True),
+    Body(name="stat_lvl", xtype=int, rename_to="stats.lvl", optional=True),
+    Body(name="stat_exp", xtype=int, rename_to="stats.exp", optional=True),
+    Body(name="stat_hp", xtype=int, rename_to="stats.hp", optional=True),
+    Body(name="stat_gold", xtype=int, rename_to="stats.gp", optional=True),
+    Body(name="stat_str", xtype=int, rename_to="stats.str", optional=True),
+    Body(name="stat_inte", xtype=int, rename_to="stats.int", optional=True),
+    Body(name="stat_con", xtype=int, rename_to="stats.con", optional=True),
+    Body(name="stat_per", xtype=int, rename_to="stats.per", optional=True),
+    Body(name="stat_mp", xtype=int, rename_to="stats.mp", optional=True),
     # return 
     Return(name="stats.class", xtype=str, rename_to="stats.job", to_repo=True),
     Return(name="stats.lvl", xtype=int, rename_to="stats.lvl", to_repo=True),
