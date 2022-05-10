@@ -82,7 +82,7 @@ class HabiUItem(metaclass=HabiUMeta):
 
     # ANCHOR Classmethods
     @classmethod
-    def from_dict(cls, data_dict: dict):
+    def from_dict(cls, **data_dict):
         if not isinstance(data_dict, dict):
             raise TypeError("data_dict must be a dict")
         if not data_dict:
@@ -92,11 +92,13 @@ class HabiUItem(metaclass=HabiUMeta):
         return cls(**passed_dict, _raw_=data_dict)
 
     @classmethod
-    def from_res(cls, res):
+    def from_res(cls, res, **kwargs):
         if not isinstance(res.data, dict):
             raise TypeError("data must be a dict")
         if not res.data:
             raise TypeError("data must not be empty")
         
-        passed_dict = {k: v for k, v in res.data.items() if k in cls.fields()}
+        kwargs.update(res.data)
+
+        passed_dict = {k: v for k, v in kwargs.items() if k in cls.fields()}
         return cls(**passed_dict, _raw_=res)
