@@ -91,6 +91,25 @@
 
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">HabiMapResponse</span><span class="p">(</span><span class="n">FrozenClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    a simple wrapper for requests.Response</span>
+
+<span class="sd">    Dataclass Vars:\n</span>
+<span class="sd">        raw : requests.Response\n</span>
+<span class="sd">        url : str - called url\n</span>
+<span class="sd">        reason : str\n</span>
+<span class="sd">        status_code : int\n</span>
+<span class="sd">        success : bool\n</span>
+<span class="sd">        is_dict : bool\n</span>
+<span class="sd">        is_json : bool\n</span>
+<span class="sd">        has_data : bool\n</span>
+<span class="sd">        timestamp : datetime.datetime\n</span>
+<span class="sd">        request_time : float\n</span>
+<span class="sd">        raw_data : typing.Any\n</span>
+<span class="sd">        json_data : typing.Any\n</span>
+<span class="sd">        repo : typing.Dict[str, typing.Any]\n</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">url</span> <span class="p">:</span> <span class="nb">str</span>
     <span class="n">is_json</span> <span class="p">:</span> <span class="nb">bool</span>
     <span class="n">json_data</span> <span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span>
@@ -261,6 +280,25 @@
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span><span class="nd">@dataclass</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">HabiMapResponse</span><span class="p">(</span><span class="n">FrozenClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    a simple wrapper for requests.Response</span>
+
+<span class="sd">    Dataclass Vars:\n</span>
+<span class="sd">        raw : requests.Response\n</span>
+<span class="sd">        url : str - called url\n</span>
+<span class="sd">        reason : str\n</span>
+<span class="sd">        status_code : int\n</span>
+<span class="sd">        success : bool\n</span>
+<span class="sd">        is_dict : bool\n</span>
+<span class="sd">        is_json : bool\n</span>
+<span class="sd">        has_data : bool\n</span>
+<span class="sd">        timestamp : datetime.datetime\n</span>
+<span class="sd">        request_time : float\n</span>
+<span class="sd">        raw_data : typing.Any\n</span>
+<span class="sd">        json_data : typing.Any\n</span>
+<span class="sd">        repo : typing.Dict[str, typing.Any]\n</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">url</span> <span class="p">:</span> <span class="nb">str</span>
     <span class="n">is_json</span> <span class="p">:</span> <span class="nb">bool</span>
     <span class="n">json_data</span> <span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span>
@@ -416,7 +454,36 @@
 
         </details>
 
-            <div class="docstring"><p>HabiMapResponse(raw: requests.models.Response, ret_params: Dict[str, <a href="habiMapAttr.html#HabiMapReturnParam">habil_map.habiMapAttr.HabiMapReturnParam</a>] = None, extract_data: bool = True)</p>
+            <div class="docstring"><p>a simple wrapper for requests.Response</p>
+
+<p>Dataclass Vars:</p>
+
+<pre><code>raw : requests.Response
+
+url : str - called url
+
+reason : str
+
+status_code : int
+
+success : bool
+
+is_dict : bool
+
+is_json : bool
+
+has_data : bool
+
+timestamp : datetime.datetime
+
+request_time : float
+
+raw_data : typing.Any
+
+json_data : typing.Any
+
+repo : typing.Dict[str, typing.Any]
+</code></pre>
 </div>
 
 
