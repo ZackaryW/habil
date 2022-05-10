@@ -151,6 +151,10 @@ class HabiMapResponse(FrozenClass):
     def data(self):
         return self.json_data
 
+    @property
+    def unix_timestamp(self):
+        return int(self.timestamp.timestamp()*1000)
+
     @classmethod
     def parse(cls, raw_response : requests.Response,ret_params : dict,  extract_data : bool = True) -> 'HabiMapResponse':
         return cls(raw_response, ret_params, extract_data)
