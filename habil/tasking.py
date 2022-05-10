@@ -8,29 +8,45 @@ import habil_case
 from habil_map.habiMapResponse import HabiMapResponse
 
 class HabiTasking:
+    @staticmethod
+    def _get_type(data):
+        
+
+        if (is_dict := isinstance(data, dict)):
+            real_type = data.get("type", None)
+        elif isinstance(data, HabiMapResponse):
+            real_type = data.json_data.get("type", None)
+        else:
+            real_type = None
+
+        if real_type is None:
+            raise ValueError("type is not defined")
+
+        match real_type:
+            case "daily":
+                return HabiDaily, is_dict
+            case "habit":
+                return HabiHabit, is_dict
+            case "reward":
+                return HabiReward, is_dict
+            case "todo":
+                return HabiTodo, is_dict
+            case "dailys":
+                return HabiDaily, is_dict
+            case "habits":
+                return HabiHabit, is_dict
+            case "rewards":
+                return HabiReward, is_dict
+            case "todos":
+                return HabiTodo, is_dict
+
     @classmethod
     def _from_res(cls, data: HabiMapResponse, token=None) -> 'HabiTasking':
-        if isinstance(data, HabiMapResponse):
-            method = "from_res"
-            xtype = data.data.get("type",None)
-        elif isinstance(data, dict):
-            method = "from_dict"
-            xtype = data.get("type",None)
+        type_, is_dict = cls._get_type(data)
+        if is_dict:
+            return type_.from_dict(**data)
         else:
-            raise TypeError("data must be HabiMapResponse or dict")
-
-        if xtype is None:
-            raise ValueError("type is missing")
-        if xtype == "daily":
-            return getattr(HabiDaily, method)(**data)
-        elif xtype == "habit":
-            return getattr(HabiHabit, method)(**data)
-        elif xtype == "reward":
-            return getattr(HabiReward, method)(**data)
-        elif xtype == "todo":
-            return getattr(HabiTodo, method)(**data)
-        else:
-            raise ValueError(f"unknown type: {xtype}")
+            return type_.from_res(data)
 
     @classmethod
     @token_required()
