@@ -40,7 +40,7 @@ class HabiStatBox(HabiUItem):
         inte : int = None,
         set :bool = False,
     token=None):
-        skip = ("token", "self", "set")
+        skip = ("token", "self", "set", "skip","changed")
         changed = {k : v for k, v in locals().items() if (v is not None and k not in skip)}
         if len(changed) == 0:
             logging.warning("No stats to update for user %s", token.get("x-api-user"))
@@ -52,9 +52,7 @@ class HabiStatBox(HabiUItem):
         if res.fail:
             raise HabiRequestException(res)
 
-        return self.from_dict(**res.repo, raw=res, id=token.get("x-api-user"))
-
-
+        return self.from_dict(**res.repo.get("stats"), raw=res, id=token.get("x-api-user"))
 
 
 @dataclass(frozen=True)
