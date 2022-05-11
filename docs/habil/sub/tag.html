@@ -58,6 +58,9 @@
                                 <a class="function" href="#HabiTag.__init__">HabiTag</a>
                         </li>
                         <li>
+                                <a class="function" href="#HabiTag.delete">delete</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#HabiTag.create">create</a>
                         </li>
                         <li>
@@ -93,7 +96,7 @@
 <span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">MappingProxyType</span>
 <span class="kn">from</span> <span class="nn">habil_base.exceptions</span> <span class="kn">import</span> <span class="n">HabiLocalNotFoundException</span><span class="p">,</span> <span class="n">HabiRequestException</span>
 <span class="kn">from</span> <span class="nn">habil.sub</span> <span class="kn">import</span> <span class="n">HabiSubElement</span>
-<span class="kn">from</span> <span class="nn">habil_base.habiToken</span> <span class="kn">import</span> <span class="n">token_required</span>
+<span class="kn">from</span> <span class="nn">habil_base.habiToken</span> <span class="kn">import</span> <span class="n">HabiTokenMeta</span>
 <span class="kn">import</span> <span class="nn">habil_case</span>
 
 <span class="k">class</span> <span class="nc">HabiTagMeta</span><span class="p">:</span>
@@ -112,8 +115,16 @@
 
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">HabiTag</span><span class="p">(</span><span class="n">HabiSubElement</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">delete_a_user_tag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">fail</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">deleteins</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+
     <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">create_new_tag</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">fail</span><span class="p">:</span>
@@ -124,7 +135,7 @@
         <span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">(</span><span class="n">dig_deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_pull</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiSubElement&#39;</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">HabiTagMeta</span><span class="o">.</span><span class="n">is_time_to_pull</span><span class="p">():</span>
             <span class="n">force_pull</span> <span class="o">=</span> <span class="kc">True</span>
@@ -141,7 +152,7 @@
     
 
     <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">(</span><span class="n">dig_deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_pull</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">HabiTagMeta</span><span class="o">.</span><span class="n">is_time_to_pull</span><span class="p">():</span>
             <span class="n">force_pull</span> <span class="o">=</span> <span class="kc">True</span>
@@ -153,7 +164,8 @@
             <span class="k">return</span> <span class="n">MappingProxyType</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="bp">cls</span><span class="p">])</span>
 
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">get_a_users_tags</span><span class="p">(</span>
-            <span class="n">headers</span><span class="o">=</span><span class="n">token</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span>
+            <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;HabiTag.get_all&quot;</span>
         <span class="p">)</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
@@ -294,8 +306,16 @@
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">HabiTag</span><span class="p">(</span><span class="n">HabiSubElement</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">delete_a_user_tag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">fail</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">deleteins</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+
     <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">create_new_tag</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">fail</span><span class="p">:</span>
@@ -306,7 +326,7 @@
         <span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">(</span><span class="n">dig_deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_pull</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiSubElement&#39;</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">HabiTagMeta</span><span class="o">.</span><span class="n">is_time_to_pull</span><span class="p">():</span>
             <span class="n">force_pull</span> <span class="o">=</span> <span class="kc">True</span>
@@ -323,7 +343,7 @@
     
 
     <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">(</span><span class="n">dig_deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_pull</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">HabiTagMeta</span><span class="o">.</span><span class="n">is_time_to_pull</span><span class="p">():</span>
             <span class="n">force_pull</span> <span class="o">=</span> <span class="kc">True</span>
@@ -335,7 +355,8 @@
             <span class="k">return</span> <span class="n">MappingProxyType</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="bp">cls</span><span class="p">])</span>
 
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">get_a_users_tags</span><span class="p">(</span>
-            <span class="n">headers</span><span class="o">=</span><span class="n">token</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span>
+            <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;HabiTag.get_all&quot;</span>
         <span class="p">)</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
@@ -370,11 +391,34 @@
     
 
                             </div>
+                            <div id="HabiTag.delete" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#HabiTag.delete">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">delete</span><span class="signature">(self) -&gt; None</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">delete_a_user_tag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">fail</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">deleteins</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            </div>
                             <div id="HabiTag.create" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#HabiTag.create">#&nbsp;&nbsp</a>
 
                 <div class="decorator">@classmethod</div>
-        <div class="decorator">@token_required()</div>
+        <div class="decorator">@HabiTokenMeta.acquire_token()</div>
 
             <span class="def">def</span>
             <span class="name">create</span><span class="signature">(cls, name: str, token=None)</span>:
@@ -383,7 +427,7 @@
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">create_new_tag</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">fail</span><span class="p">:</span>
@@ -403,7 +447,7 @@
                                         <div class="attr function"><a class="headerlink" href="#HabiTag.get">#&nbsp;&nbsp</a>
 
                 <div class="decorator">@classmethod</div>
-        <div class="decorator">@token_required(dig_deep=True)</div>
+        <div class="decorator">@HabiTokenMeta.acquire_token()</div>
 
             <span class="def">def</span>
             <span class="name">get</span><span class="signature">(
@@ -417,7 +461,7 @@
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">(</span><span class="n">dig_deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_pull</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiSubElement&#39;</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">HabiTagMeta</span><span class="o">.</span><span class="n">is_time_to_pull</span><span class="p">():</span>
             <span class="n">force_pull</span> <span class="o">=</span> <span class="kc">True</span>
@@ -442,7 +486,7 @@
                                         <div class="attr function"><a class="headerlink" href="#HabiTag.get_all">#&nbsp;&nbsp</a>
 
                 <div class="decorator">@classmethod</div>
-        <div class="decorator">@token_required(dig_deep=True)</div>
+        <div class="decorator">@HabiTokenMeta.acquire_token()</div>
 
             <span class="def">def</span>
             <span class="name">get_all</span><span class="signature">(cls, token=None, force_pull: bool = True) -&gt; list</span>:
@@ -451,7 +495,7 @@
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">(</span><span class="n">dig_deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_pull</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">HabiTagMeta</span><span class="o">.</span><span class="n">is_time_to_pull</span><span class="p">():</span>
             <span class="n">force_pull</span> <span class="o">=</span> <span class="kc">True</span>
@@ -463,7 +507,8 @@
             <span class="k">return</span> <span class="n">MappingProxyType</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="bp">cls</span><span class="p">])</span>
 
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">get_a_users_tags</span><span class="p">(</span>
-            <span class="n">headers</span><span class="o">=</span><span class="n">token</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span>
+            <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;HabiTag.get_all&quot;</span>
         <span class="p">)</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>

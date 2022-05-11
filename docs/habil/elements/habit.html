@@ -72,7 +72,7 @@
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">habil.elements</span> <span class="kn">import</span> <span class="n">AHabiTask</span>
-<span class="kn">from</span> <span class="nn">habil_base.habiToken</span> <span class="kn">import</span> <span class="n">token_required</span>
+<span class="kn">from</span> <span class="nn">habil_base.habiToken</span> <span class="kn">import</span> <span class="n">HabiTokenMeta</span>
 
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">HabiHabit</span><span class="p">(</span><span class="n">AHabiTask</span><span class="p">):</span>
@@ -80,19 +80,19 @@
     <span class="n">down</span> <span class="p">:</span> <span class="nb">bool</span>
     <span class="n">_type</span> <span class="o">=</span> <span class="s2">&quot;habit&quot;</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">good_habit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">flag</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span><span class="n">up</span><span class="o">=</span><span class="n">flag</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;habil.habit.HabiHabit.good_habit&quot;</span><span class="p">)</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">bad_habit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">flag</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span><span class="n">up</span><span class="o">=</span><span class="n">flag</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;habil.habit.HabiHabit.bad_habit&quot;</span><span class="p">)</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">score_good</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_task</span><span class="p">(</span><span class="n">score</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;habil.habit.HabiHabit.score_good&quot;</span><span class="p">)</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">score_bad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_task</span><span class="p">(</span><span class="n">score</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;habil.habit.HabiHabit.score_bad&quot;</span><span class="p">)</span>
 </pre></div>
@@ -118,19 +118,19 @@
     <span class="n">down</span> <span class="p">:</span> <span class="nb">bool</span>
     <span class="n">_type</span> <span class="o">=</span> <span class="s2">&quot;habit&quot;</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">good_habit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">flag</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span><span class="n">up</span><span class="o">=</span><span class="n">flag</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;habil.habit.HabiHabit.good_habit&quot;</span><span class="p">)</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">bad_habit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">flag</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span><span class="n">up</span><span class="o">=</span><span class="n">flag</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;habil.habit.HabiHabit.bad_habit&quot;</span><span class="p">)</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">score_good</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_task</span><span class="p">(</span><span class="n">score</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;habil.habit.HabiHabit.score_good&quot;</span><span class="p">)</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">score_bad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_task</span><span class="p">(</span><span class="n">score</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;habil.habit.HabiHabit.score_bad&quot;</span><span class="p">)</span>
 </pre></div>
@@ -147,10 +147,11 @@
         
             <span class="name">HabiHabit</span><span class="signature">(
     id: str,
+    userId: str,
     createdAt: str,
     updatedAt: str,
     text: str,
-    tags: List[str],
+    tags: Tuple[str],
     up: bool,
     down: bool
 )</span>
@@ -163,7 +164,7 @@
                             <div id="HabiHabit.good_habit" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#HabiHabit.good_habit">#&nbsp;&nbsp</a>
 
-                <div class="decorator">@token_required()</div>
+                <div class="decorator">@HabiTokenMeta.acquire_token()</div>
 
             <span class="def">def</span>
             <span class="name">good_habit</span><span class="signature">(self, flag: bool = True, token=None)</span>:
@@ -171,7 +172,7 @@
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@token_required</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">good_habit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">flag</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span><span class="n">up</span><span class="o">=</span><span class="n">flag</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;habil.habit.HabiHabit.good_habit&quot;</span><span class="p">)</span>
 </pre></div>
@@ -184,7 +185,7 @@
                             <div id="HabiHabit.bad_habit" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#HabiHabit.bad_habit">#&nbsp;&nbsp</a>
 
-                <div class="decorator">@token_required()</div>
+                <div class="decorator">@HabiTokenMeta.acquire_token()</div>
 
             <span class="def">def</span>
             <span class="name">bad_habit</span><span class="signature">(self, flag: bool = True, token=None)</span>:
@@ -192,7 +193,7 @@
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@token_required</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">bad_habit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">flag</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span><span class="n">up</span><span class="o">=</span><span class="n">flag</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;habil.habit.HabiHabit.bad_habit&quot;</span><span class="p">)</span>
 </pre></div>
@@ -205,7 +206,7 @@
                             <div id="HabiHabit.score_good" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#HabiHabit.score_good">#&nbsp;&nbsp</a>
 
-                <div class="decorator">@token_required()</div>
+                <div class="decorator">@HabiTokenMeta.acquire_token()</div>
 
             <span class="def">def</span>
             <span class="name">score_good</span><span class="signature">(self, token=None)</span>:
@@ -213,7 +214,7 @@
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@token_required</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">score_good</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_task</span><span class="p">(</span><span class="n">score</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;habil.habit.HabiHabit.score_good&quot;</span><span class="p">)</span>
 </pre></div>
@@ -226,7 +227,7 @@
                             <div id="HabiHabit.score_bad" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#HabiHabit.score_bad">#&nbsp;&nbsp</a>
 
-                <div class="decorator">@token_required()</div>
+                <div class="decorator">@HabiTokenMeta.acquire_token()</div>
 
             <span class="def">def</span>
             <span class="name">score_bad</span><span class="signature">(self, token=None)</span>:
@@ -234,7 +235,7 @@
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@token_required</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">score_bad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_task</span><span class="p">(</span><span class="n">score</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;habil.habit.HabiHabit.score_bad&quot;</span><span class="p">)</span>
 </pre></div>
@@ -252,6 +253,9 @@
                 <dd id="HabiHabit.update" class="function"><a href="../elements.html#AHabiTask.update">update</a></dd>
                 <dd id="HabiHabit.delete" class="function"><a href="../elements.html#AHabiTask.delete">delete</a></dd>
                 <dd id="HabiHabit.score_task" class="function"><a href="../elements.html#AHabiTask.score_task">score_task</a></dd>
+                <dd id="HabiHabit.has_tag" class="function"><a href="../elements.html#AHabiTask.has_tag">has_tag</a></dd>
+                <dd id="HabiHabit.add_tag" class="function"><a href="../elements.html#AHabiTask.add_tag">add_tag</a></dd>
+                <dd id="HabiHabit.remove_tag" class="function"><a href="../elements.html#AHabiTask.remove_tag">remove_tag</a></dd>
 
             </div>
             <div><dt><a href="../../habil_base/habiUItem.html#HabiUItem">habil_base.habiUItem.HabiUItem</a></dt>

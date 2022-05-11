@@ -51,6 +51,20 @@
     <span class="s2">&quot;https://habitica.com/api/v3/tasks/</span><span class="si">{taskId}</span><span class="s2">/tags/</span><span class="si">{tagId}</span><span class="s2">&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 
+<span class="n">add_a_checklist_item_to_task</span> <span class="o">=</span> <span class="n">HabiMapCase</span><span class="o">.</span><span class="n">post_case</span><span class="p">(</span>
+    <span class="s2">&quot;https://habitica.com/api/v3/tasks/</span><span class="si">{taskId}</span><span class="s2">/checklist&quot;</span><span class="p">,</span>
+    <span class="n">Body</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">xtype</span><span class="o">=</span><span class="nb">str</span><span class="p">),</span>
+    <span class="n">Body</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;completed&quot;</span><span class="p">,</span> <span class="n">xtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">delete_a_tag_from_a_task</span> <span class="o">=</span> <span class="n">HabiMapCase</span><span class="o">.</span><span class="n">delete_case</span><span class="p">(</span>
+    <span class="s2">&quot;https://habitica.com/api/v3/tasks/</span><span class="si">{taskId}</span><span class="s2">/tags/</span><span class="si">{tagId}</span><span class="s2">&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">delete_a_checklist_item_from_task</span> <span class="o">=</span> <span class="n">HabiMapCase</span><span class="o">.</span><span class="n">delete_case</span><span class="p">(</span>
+    <span class="s2">&quot;https://habitica.com/api/v3/tasks/</span><span class="si">{taskId}</span><span class="s2">/checklist/</span><span class="si">{checklistId}</span><span class="s2">&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
 <span class="n">delete_a_task</span> <span class="o">=</span> <span class="n">HabiMapCase</span><span class="o">.</span><span class="n">delete_case</span><span class="p">(</span>
     <span class="s2">&quot;https://habitica.com/api/v3/tasks/</span><span class="si">{taskId}</span><span class="s2">&quot;</span><span class="p">,</span>
 <span class="p">)</span>

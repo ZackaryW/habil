@@ -69,7 +69,7 @@
 <span class="kn">from</span> <span class="nn">habil.elements.habit</span> <span class="kn">import</span> <span class="n">HabiHabit</span>
 <span class="kn">from</span> <span class="nn">habil.elements.reward</span> <span class="kn">import</span> <span class="n">HabiReward</span>
 <span class="kn">from</span> <span class="nn">habil.elements.todo</span> <span class="kn">import</span> <span class="n">HabiTodo</span>
-<span class="kn">from</span> <span class="nn">habil_base.habiToken</span> <span class="kn">import</span> <span class="n">token_required</span>
+<span class="kn">from</span> <span class="nn">habil_base.habiToken</span> <span class="kn">import</span> <span class="n">HabiTokenMeta</span>
 <span class="kn">import</span> <span class="nn">habil_case</span>
 <span class="kn">from</span> <span class="nn">habil_map.habiMapResponse</span> <span class="kn">import</span> <span class="n">HabiMapResponse</span>
 
@@ -115,17 +115,17 @@
             <span class="k">return</span> <span class="n">type_</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">HabiDaily</span><span class="p">,</span> <span class="n">HabiHabit</span><span class="p">,</span> <span class="n">HabiReward</span><span class="p">,</span> <span class="n">HabiTodo</span> <span class="p">,</span><span class="kc">None</span><span class="p">]:</span>
-        <span class="n">task_res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
+        <span class="n">task_res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;HabiTasking.get&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">task_res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_res</span><span class="p">(</span><span class="n">task_res</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">HabiDaily</span><span class="p">,</span> <span class="n">HabiHabit</span><span class="p">,</span> <span class="n">HabiReward</span><span class="p">,</span> <span class="n">HabiTodo</span><span class="p">]]:</span>
-        <span class="n">tasks_res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_users_tasks</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
+        <span class="n">tasks_res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_users_tasks</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;HabiTasking.get_all&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">tasks_res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
@@ -197,17 +197,17 @@
             <span class="k">return</span> <span class="n">type_</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">HabiDaily</span><span class="p">,</span> <span class="n">HabiHabit</span><span class="p">,</span> <span class="n">HabiReward</span><span class="p">,</span> <span class="n">HabiTodo</span> <span class="p">,</span><span class="kc">None</span><span class="p">]:</span>
-        <span class="n">task_res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
+        <span class="n">task_res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;HabiTasking.get&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">task_res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_res</span><span class="p">(</span><span class="n">task_res</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">HabiDaily</span><span class="p">,</span> <span class="n">HabiHabit</span><span class="p">,</span> <span class="n">HabiReward</span><span class="p">,</span> <span class="n">HabiTodo</span><span class="p">]]:</span>
-        <span class="n">tasks_res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_users_tasks</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
+        <span class="n">tasks_res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_users_tasks</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;HabiTasking.get_all&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">tasks_res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
@@ -242,7 +242,7 @@
                                         <div class="attr function"><a class="headerlink" href="#HabiTasking.get">#&nbsp;&nbsp</a>
 
                 <div class="decorator">@classmethod</div>
-        <div class="decorator">@token_required()</div>
+        <div class="decorator">@HabiTokenMeta.acquire_token()</div>
 
             <span class="def">def</span>
             <span class="name">get</span><span class="signature">(
@@ -255,9 +255,9 @@
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">HabiDaily</span><span class="p">,</span> <span class="n">HabiHabit</span><span class="p">,</span> <span class="n">HabiReward</span><span class="p">,</span> <span class="n">HabiTodo</span> <span class="p">,</span><span class="kc">None</span><span class="p">]:</span>
-        <span class="n">task_res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
+        <span class="n">task_res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;HabiTasking.get&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">task_res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_res</span><span class="p">(</span><span class="n">task_res</span><span class="p">)</span>
@@ -272,7 +272,7 @@
                                         <div class="attr function"><a class="headerlink" href="#HabiTasking.get_all">#&nbsp;&nbsp</a>
 
                 <div class="decorator">@classmethod</div>
-        <div class="decorator">@token_required()</div>
+        <div class="decorator">@HabiTokenMeta.acquire_token()</div>
 
             <span class="def">def</span>
             <span class="name">get_all</span><span class="signature">(
@@ -284,9 +284,9 @@
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">HabiDaily</span><span class="p">,</span> <span class="n">HabiHabit</span><span class="p">,</span> <span class="n">HabiReward</span><span class="p">,</span> <span class="n">HabiTodo</span><span class="p">]]:</span>
-        <span class="n">tasks_res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_users_tasks</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
+        <span class="n">tasks_res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_users_tasks</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;HabiTasking.get_all&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">tasks_res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 

@@ -69,7 +69,7 @@
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">typing</span>
-<span class="kn">from</span> <span class="nn">habil_base.habiToken</span> <span class="kn">import</span> <span class="n">token_required</span>
+<span class="kn">from</span> <span class="nn">habil_base.habiToken</span> <span class="kn">import</span> <span class="n">HabiTokenMeta</span>
 <span class="kn">from</span> <span class="nn">habil_utils</span> <span class="kn">import</span> <span class="n">FrozenClass</span><span class="p">,</span> <span class="n">get_simple_caller_name</span><span class="p">,</span> <span class="n">get_caller_class</span>
 <span class="kn">from</span> <span class="nn">habil</span> <span class="kn">import</span> <span class="n">HabiDaily</span>
 <span class="kn">import</span> <span class="nn">re</span>
@@ -87,7 +87,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="nb">max</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="n">current</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">+=</span> <span class="n">count</span>
         <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
@@ -104,12 +104,12 @@
         <span class="n">daily</span> <span class="o">=</span> <span class="n">daily</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;habil_ext.counterDaily.CounterDaily.complete&quot;</span><span class="p">)</span>
         <span class="k">return</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">daily</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HabiDaily</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">HabiDaily</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">overload</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">daily</span><span class="p">:</span> <span class="n">HabiDaily</span><span class="p">,</span> <span class="n">reset</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="nb">max</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">current</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="s2">&quot;CounterDaily&quot;</span><span class="p">,</span> <span class="n">HabiDaily</span><span class="p">]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">daily</span><span class="p">,</span> <span class="n">HabiDaily</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;daily must be a HabiDaily&quot;</span><span class="p">)</span>
@@ -187,7 +187,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="nb">max</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="n">current</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">+=</span> <span class="n">count</span>
         <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
@@ -204,12 +204,12 @@
         <span class="n">daily</span> <span class="o">=</span> <span class="n">daily</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">caller_func</span><span class="o">=</span><span class="s2">&quot;habil_ext.counterDaily.CounterDaily.complete&quot;</span><span class="p">)</span>
         <span class="k">return</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">daily</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HabiDaily</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">HabiDaily</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">overload</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">daily</span><span class="p">:</span> <span class="n">HabiDaily</span><span class="p">,</span> <span class="n">reset</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="nb">max</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">current</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="s2">&quot;CounterDaily&quot;</span><span class="p">,</span> <span class="n">HabiDaily</span><span class="p">]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">daily</span><span class="p">,</span> <span class="n">HabiDaily</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;daily must be a HabiDaily&quot;</span><span class="p">)</span>
@@ -294,7 +294,7 @@
                             <div id="CounterDaily.complete" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#CounterDaily.complete">#&nbsp;&nbsp</a>
 
-                <div class="decorator">@token_required()</div>
+                <div class="decorator">@HabiTokenMeta.acquire_token()</div>
 
             <span class="def">def</span>
             <span class="name">complete</span><span class="signature">(self, count: int = 1, token=None) -&gt; None</span>:
@@ -302,7 +302,7 @@
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@token_required</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">+=</span> <span class="n">count</span>
         <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
@@ -328,7 +328,7 @@
                             <div id="CounterDaily.daily" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#CounterDaily.daily">#&nbsp;&nbsp</a>
 
-                <div class="decorator">@token_required()</div>
+                <div class="decorator">@HabiTokenMeta.acquire_token()</div>
 
             <span class="def">def</span>
             <span class="name">daily</span><span class="signature">(self, token=None) -&gt; <a href="../habil/elements/daily.html#HabiDaily">habil.elements.daily.HabiDaily</a></span>:
@@ -336,7 +336,7 @@
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@token_required</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">daily</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HabiDaily</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">HabiDaily</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
 </pre></div>
@@ -350,7 +350,7 @@
                                         <div class="attr function"><a class="headerlink" href="#CounterDaily.overload">#&nbsp;&nbsp</a>
 
                 <div class="decorator">@classmethod</div>
-        <div class="decorator">@token_required()</div>
+        <div class="decorator">@HabiTokenMeta.acquire_token()</div>
 
             <span class="def">def</span>
             <span class="name">overload</span><span class="signature">(
@@ -366,7 +366,7 @@
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">overload</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">daily</span><span class="p">:</span> <span class="n">HabiDaily</span><span class="p">,</span> <span class="n">reset</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="nb">max</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">current</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="s2">&quot;CounterDaily&quot;</span><span class="p">,</span> <span class="n">HabiDaily</span><span class="p">]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">daily</span><span class="p">,</span> <span class="n">HabiDaily</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;daily must be a HabiDaily&quot;</span><span class="p">)</span>

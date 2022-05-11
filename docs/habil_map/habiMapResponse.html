@@ -121,10 +121,12 @@
     <span class="n">status_code</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
     
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+        <span class="n">caller_func</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">raw</span> <span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">,</span>
         <span class="n">ret_params</span> <span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">HabiMapReturnParam</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">extract_data</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">caller_func</span> <span class="o">=</span> <span class="n">caller_func</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">=</span> <span class="n">raw</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reason</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">reason</span>
@@ -259,8 +261,13 @@
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">raw_response</span> <span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">,</span><span class="n">ret_params</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>  <span class="n">extract_data</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiMapResponse&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">raw_response</span><span class="p">,</span> <span class="n">ret_params</span><span class="p">,</span> <span class="n">extract_data</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">caller_func</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">raw_response</span> <span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">,</span><span class="n">ret_params</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>  <span class="n">extract_data</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiMapResponse&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">caller_func</span><span class="o">=</span><span class="n">caller_func</span><span class="p">,</span>
+            <span class="n">raw</span><span class="o">=</span><span class="n">raw_response</span><span class="p">,</span>
+            <span class="n">ret_params</span><span class="o">=</span><span class="n">ret_params</span><span class="p">,</span> 
+            <span class="n">extract_data</span><span class="o">=</span><span class="n">extract_data</span><span class="p">,</span>
+        <span class="p">)</span>
 </pre></div>
 
         </details>
@@ -310,10 +317,12 @@
     <span class="n">status_code</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
     
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+        <span class="n">caller_func</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">raw</span> <span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">,</span>
         <span class="n">ret_params</span> <span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">HabiMapReturnParam</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">extract_data</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">caller_func</span> <span class="o">=</span> <span class="n">caller_func</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">=</span> <span class="n">raw</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reason</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">reason</span>
@@ -448,8 +457,13 @@
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">raw_response</span> <span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">,</span><span class="n">ret_params</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>  <span class="n">extract_data</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiMapResponse&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">raw_response</span><span class="p">,</span> <span class="n">ret_params</span><span class="p">,</span> <span class="n">extract_data</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">caller_func</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">raw_response</span> <span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">,</span><span class="n">ret_params</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>  <span class="n">extract_data</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiMapResponse&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">caller_func</span><span class="o">=</span><span class="n">caller_func</span><span class="p">,</span>
+            <span class="n">raw</span><span class="o">=</span><span class="n">raw_response</span><span class="p">,</span>
+            <span class="n">ret_params</span><span class="o">=</span><span class="n">ret_params</span><span class="p">,</span> 
+            <span class="n">extract_data</span><span class="o">=</span><span class="n">extract_data</span><span class="p">,</span>
+        <span class="p">)</span>
 </pre></div>
 
         </details>
@@ -492,6 +506,7 @@ repo : typing.Dict[str, typing.Any]
 
         
             <span class="name">HabiMapResponse</span><span class="signature">(
+    caller_func: str,
     raw: requests.models.Response,
     ret_params: Dict[str, <a href="habiMapAttr.html#HabiMapReturnParam">habil_map.habiMapAttr.HabiMapReturnParam</a>] = None,
     extract_data: bool = True
@@ -501,10 +516,12 @@ repo : typing.Dict[str, typing.Any]
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+        <span class="n">caller_func</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">raw</span> <span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">,</span>
         <span class="n">ret_params</span> <span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">HabiMapReturnParam</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">extract_data</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">caller_func</span> <span class="o">=</span> <span class="n">caller_func</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">=</span> <span class="n">raw</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reason</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">reason</span>
@@ -650,6 +667,7 @@ repo : typing.Dict[str, typing.Any]
             <span class="def">def</span>
             <span class="name">parse</span><span class="signature">(
     cls,
+    caller_func: str,
     raw_response: requests.models.Response,
     ret_params: dict,
     extract_data: bool = True
@@ -659,8 +677,13 @@ repo : typing.Dict[str, typing.Any]
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">raw_response</span> <span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">,</span><span class="n">ret_params</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>  <span class="n">extract_data</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiMapResponse&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">raw_response</span><span class="p">,</span> <span class="n">ret_params</span><span class="p">,</span> <span class="n">extract_data</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">caller_func</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">raw_response</span> <span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">,</span><span class="n">ret_params</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>  <span class="n">extract_data</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiMapResponse&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">caller_func</span><span class="o">=</span><span class="n">caller_func</span><span class="p">,</span>
+            <span class="n">raw</span><span class="o">=</span><span class="n">raw_response</span><span class="p">,</span>
+            <span class="n">ret_params</span><span class="o">=</span><span class="n">ret_params</span><span class="p">,</span> 
+            <span class="n">extract_data</span><span class="o">=</span><span class="n">extract_data</span><span class="p">,</span>
+        <span class="p">)</span>
 </pre></div>
 
         </details>

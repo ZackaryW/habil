@@ -98,12 +98,13 @@
         
             <span class="name">HabiTodo</span><span class="signature">(
     id: str,
+    userId: str,
     createdAt: str,
     updatedAt: str,
     text: str,
-    tags: List[str],
+    tags: Tuple[str],
     completed: bool,
-    checklist: List[str]
+    checklist: Tuple[habil.other.subtasks.HabiSubTask]
 )</span>
     </div>
 
@@ -116,6 +117,7 @@
                                 <dl>
                                     <div><dt><a href="../elements.html#CompletableTask">habil.elements.CompletableTask</a></dt>
                                 <dd id="HabiTodo.complete" class="function"><a href="../elements.html#CompletableTask.complete">complete</a></dd>
+                <dd id="HabiTodo.add_checklist_item" class="function"><a href="../elements.html#CompletableTask.add_checklist_item">add_checklist_item</a></dd>
 
             </div>
             <div><dt><a href="../elements.html#AHabiTask">habil.elements.AHabiTask</a></dt>
@@ -123,6 +125,9 @@
                 <dd id="HabiTodo.update" class="function"><a href="../elements.html#AHabiTask.update">update</a></dd>
                 <dd id="HabiTodo.delete" class="function"><a href="../elements.html#AHabiTask.delete">delete</a></dd>
                 <dd id="HabiTodo.score_task" class="function"><a href="../elements.html#AHabiTask.score_task">score_task</a></dd>
+                <dd id="HabiTodo.has_tag" class="function"><a href="../elements.html#AHabiTask.has_tag">has_tag</a></dd>
+                <dd id="HabiTodo.add_tag" class="function"><a href="../elements.html#AHabiTask.add_tag">add_tag</a></dd>
+                <dd id="HabiTodo.remove_tag" class="function"><a href="../elements.html#AHabiTask.remove_tag">remove_tag</a></dd>
 
             </div>
             <div><dt><a href="../../habil_base/habiUItem.html#HabiUItem">habil_base.habiUItem.HabiUItem</a></dt>

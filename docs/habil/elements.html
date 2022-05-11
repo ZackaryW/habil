@@ -55,6 +55,15 @@
                         <li>
                                 <a class="function" href="#AHabiTask.score_task">score_task</a>
                         </li>
+                        <li>
+                                <a class="function" href="#AHabiTask.has_tag">has_tag</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#AHabiTask.add_tag">add_tag</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#AHabiTask.remove_tag">remove_tag</a>
+                        </li>
                 </ul>
 
             </li>
@@ -66,6 +75,9 @@
                         </li>
                         <li>
                                 <a class="function" href="#CompletableTask.complete">complete</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#CompletableTask.add_checklist_item">add_checklist_item</a>
                         </li>
                 </ul>
 
@@ -90,19 +102,22 @@
                         <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">habil.other.subtasks</span> <span class="kn">import</span> <span class="n">HabiSubTask</span>
 <span class="kn">from</span> <span class="nn">habil.sub.tag</span> <span class="kn">import</span> <span class="n">HabiTag</span>
 <span class="kn">from</span> <span class="nn">habil_base.exceptions</span> <span class="kn">import</span> <span class="n">HabiRequestException</span>
 <span class="kn">from</span> <span class="nn">habil_base.habiUItem</span> <span class="kn">import</span> <span class="n">HabiUItem</span>
 <span class="kn">import</span> <span class="nn">habil_case</span>
-<span class="kn">from</span> <span class="nn">habil_base</span> <span class="kn">import</span> <span class="n">token_required</span>
+<span class="kn">from</span> <span class="nn">habil_base</span> <span class="kn">import</span> <span class="n">HabiTokenMeta</span>
 <span class="kn">import</span> <span class="nn">typing</span>
+<span class="kn">from</span> <span class="nn">habil.other.profile</span> <span class="kn">import</span> <span class="n">HabiStatBox</span>
 
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">AHabiTask</span><span class="p">(</span><span class="n">HabiUItem</span><span class="p">):</span>
+    <span class="n">userId</span> <span class="p">:</span> <span class="nb">str</span>
     <span class="n">createdAt</span> <span class="p">:</span> <span class="nb">str</span>
     <span class="n">updatedAt</span> <span class="p">:</span> <span class="nb">str</span>
     <span class="n">text</span> <span class="p">:</span> <span class="nb">str</span>
-    <span class="n">tags</span> <span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">tags</span> <span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="n">_type</span> <span class="o">=</span> <span class="s2">&quot;task&quot;</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -110,7 +125,7 @@
         <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
             <span class="n">atag</span> <span class="o">=</span> <span class="n">HabiTag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span>
             <span class="n">tag_objs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atag</span><span class="p">)</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;tags&quot;</span><span class="p">,</span> <span class="n">tag_objs</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;tags&quot;</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">tag_objs</span><span class="p">))</span> <span class="c1"># make immutable</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
@@ -120,7 +135,7 @@
 
 
     <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
@@ -129,7 +144,7 @@
             <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">-&gt;</span> <span class="s1">&#39;AHabiTask&#39;</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">update_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
@@ -137,35 +152,79 @@
         <span class="n">created_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">created_obj</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">delete_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">deleteins</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">score_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">score</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">score_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;up&quot;</span> <span class="k">if</span> <span class="n">score</span> <span class="k">else</span> <span class="s2">&quot;down&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
 
+    <span class="c1"># ANCHOR tag operations</span>
+    <span class="k">def</span> <span class="nf">has_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+            <span class="n">tag</span> <span class="p">:</span> <span class="n">HabiTag</span>
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">tag</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">add_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">HabiTag</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;AHabiTask&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">add_a_tag_to_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">tagId</span><span class="o">=</span><span class="n">tag</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">fail</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">remove_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">HabiTag</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;AHabiTask&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">delete_a_tag_from_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">tagId</span><span class="o">=</span><span class="n">tag</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">fail</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">CompletableTask</span><span class="p">(</span><span class="n">AHabiTask</span><span class="p">):</span>
     <span class="n">completed</span> <span class="p">:</span> <span class="nb">bool</span>
-    <span class="n">checklist</span> <span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">checklist</span> <span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">HabiSubTask</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
-        <span class="k">pass</span>
+        <span class="n">checklists</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">checklist</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">checklist</span><span class="p">:</span>
+            <span class="n">checklists</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">HabiSubTask</span><span class="p">(</span><span class="o">**</span><span class="n">checklist</span><span class="p">,</span> <span class="n">userId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">userId</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;checklist&quot;</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">checklists</span><span class="p">))</span>
+
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revert</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;CompletableTask&#39;</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">revert</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;revert must be bool&quot;</span><span class="p">)</span>
 
+        <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">score_a_task</span><span class="p">(</span><span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;up&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">revert</span> <span class="k">else</span> <span class="s2">&quot;down&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         
+        <span class="n">statbox</span> <span class="o">=</span> <span class="n">HabiStatBox</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">task</span><span class="p">,</span> <span class="n">statbox</span>
+
+    <span class="c1"># ANCHOR checklist</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">add_checklist_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">completed</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;CompletableTask&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">add_a_checklist_item_to_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">completed</span><span class="o">=</span><span class="n">completed</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -185,10 +244,11 @@
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">AHabiTask</span><span class="p">(</span><span class="n">HabiUItem</span><span class="p">):</span>
+    <span class="n">userId</span> <span class="p">:</span> <span class="nb">str</span>
     <span class="n">createdAt</span> <span class="p">:</span> <span class="nb">str</span>
     <span class="n">updatedAt</span> <span class="p">:</span> <span class="nb">str</span>
     <span class="n">text</span> <span class="p">:</span> <span class="nb">str</span>
-    <span class="n">tags</span> <span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">tags</span> <span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="n">_type</span> <span class="o">=</span> <span class="s2">&quot;task&quot;</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -196,7 +256,7 @@
         <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
             <span class="n">atag</span> <span class="o">=</span> <span class="n">HabiTag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span>
             <span class="n">tag_objs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atag</span><span class="p">)</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;tags&quot;</span><span class="p">,</span> <span class="n">tag_objs</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;tags&quot;</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">tag_objs</span><span class="p">))</span> <span class="c1"># make immutable</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
@@ -206,7 +266,7 @@
 
 
     <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
@@ -215,7 +275,7 @@
             <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">-&gt;</span> <span class="s1">&#39;AHabiTask&#39;</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">update_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
@@ -223,19 +283,43 @@
         <span class="n">created_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">created_obj</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">delete_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">deleteins</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">score_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">score</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">score_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;up&quot;</span> <span class="k">if</span> <span class="n">score</span> <span class="k">else</span> <span class="s2">&quot;down&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
+
+    <span class="c1"># ANCHOR tag operations</span>
+    <span class="k">def</span> <span class="nf">has_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+            <span class="n">tag</span> <span class="p">:</span> <span class="n">HabiTag</span>
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">tag</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">add_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">HabiTag</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;AHabiTask&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">add_a_tag_to_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">tagId</span><span class="o">=</span><span class="n">tag</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">fail</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">remove_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">HabiTag</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;AHabiTask&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">delete_a_tag_from_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">tagId</span><span class="o">=</span><span class="n">tag</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">fail</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -248,7 +332,14 @@
                                         <div class="attr function"><a class="headerlink" href="#AHabiTask.__init__">#&nbsp;&nbsp</a>
 
         
-            <span class="name">AHabiTask</span><span class="signature">(id: str, createdAt: str, updatedAt: str, text: str, tags: List[str])</span>
+            <span class="name">AHabiTask</span><span class="signature">(
+    id: str,
+    userId: str,
+    createdAt: str,
+    updatedAt: str,
+    text: str,
+    tags: Tuple[str]
+)</span>
     </div>
 
     
@@ -259,7 +350,7 @@
                                         <div class="attr function"><a class="headerlink" href="#AHabiTask.get">#&nbsp;&nbsp</a>
 
                 <div class="decorator">@classmethod</div>
-        <div class="decorator">@token_required()</div>
+        <div class="decorator">@HabiTokenMeta.acquire_token()</div>
 
             <span class="def">def</span>
             <span class="name">get</span><span class="signature">(cls, id: str, token=None, **kwargs)</span>:
@@ -268,7 +359,7 @@
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
-    <span class="nd">@token_required</span><span class="p">()</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
@@ -286,7 +377,7 @@
                             <div id="AHabiTask.update" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#AHabiTask.update">#&nbsp;&nbsp</a>
 
-                <div class="decorator">@token_required()</div>
+                <div class="decorator">@HabiTokenMeta.acquire_token()</div>
 
             <span class="def">def</span>
             <span class="name">update</span><span class="signature">(self, token=None, **kwargs) -&gt; <a href="#AHabiTask">habil.elements.AHabiTask</a></span>:
@@ -294,7 +385,7 @@
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@token_required</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">-&gt;</span> <span class="s1">&#39;AHabiTask&#39;</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">update_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
@@ -311,7 +402,7 @@
                             <div id="AHabiTask.delete" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#AHabiTask.delete">#&nbsp;&nbsp</a>
 
-                <div class="decorator">@token_required()</div>
+                <div class="decorator">@HabiTokenMeta.acquire_token()</div>
 
             <span class="def">def</span>
             <span class="name">delete</span><span class="signature">(self, token=None, **kwargs) -&gt; bool</span>:
@@ -319,11 +410,13 @@
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@token_required</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">delete_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">deleteins</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span>
 </pre></div>
 
@@ -335,7 +428,7 @@
                             <div id="AHabiTask.score_task" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#AHabiTask.score_task">#&nbsp;&nbsp</a>
 
-                <div class="decorator">@token_required()</div>
+                <div class="decorator">@HabiTokenMeta.acquire_token()</div>
 
             <span class="def">def</span>
             <span class="name">score_task</span><span class="signature">(self, score: bool = True, token=None, **kwargs)</span>:
@@ -343,12 +436,91 @@
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@token_required</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">score_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">score</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">score_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;up&quot;</span> <span class="k">if</span> <span class="n">score</span> <span class="k">else</span> <span class="s2">&quot;down&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            </div>
+                            <div id="AHabiTask.has_tag" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#AHabiTask.has_tag">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">has_tag</span><span class="signature">(self, name: str = None, id: str = None) -&gt; bool</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">has_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+            <span class="n">tag</span> <span class="p">:</span> <span class="n">HabiTag</span>
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">tag</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            </div>
+                            <div id="AHabiTask.add_tag" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#AHabiTask.add_tag">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@HabiTokenMeta.acquire_token()</div>
+
+            <span class="def">def</span>
+            <span class="name">add_tag</span><span class="signature">(
+    self,
+    tag: <a href="sub/tag.html#HabiTag">habil.sub.tag.HabiTag</a>,
+    token=None
+) -&gt; <a href="#AHabiTask">habil.elements.AHabiTask</a></span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">add_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">HabiTag</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;AHabiTask&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">add_a_tag_to_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">tagId</span><span class="o">=</span><span class="n">tag</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">fail</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            </div>
+                            <div id="AHabiTask.remove_tag" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#AHabiTask.remove_tag">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@HabiTokenMeta.acquire_token()</div>
+
+            <span class="def">def</span>
+            <span class="name">remove_tag</span><span class="signature">(
+    self,
+    tag: <a href="sub/tag.html#HabiTag">habil.sub.tag.HabiTag</a>,
+    token=None
+) -&gt; <a href="#AHabiTask">habil.elements.AHabiTask</a></span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">remove_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">HabiTag</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;AHabiTask&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">delete_a_tag_from_a_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">tagId</span><span class="o">=</span><span class="n">tag</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">fail</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -383,16 +555,37 @@
             <div class="pdoc-code codehilite"><pre><span></span><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">CompletableTask</span><span class="p">(</span><span class="n">AHabiTask</span><span class="p">):</span>
     <span class="n">completed</span> <span class="p">:</span> <span class="nb">bool</span>
-    <span class="n">checklist</span> <span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">checklist</span> <span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">HabiSubTask</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
-        <span class="k">pass</span>
+        <span class="n">checklists</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">checklist</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">checklist</span><span class="p">:</span>
+            <span class="n">checklists</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">HabiSubTask</span><span class="p">(</span><span class="o">**</span><span class="n">checklist</span><span class="p">,</span> <span class="n">userId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">userId</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
 
-    <span class="nd">@token_required</span><span class="p">()</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;checklist&quot;</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">checklists</span><span class="p">))</span>
+
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revert</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;CompletableTask&#39;</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">revert</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;revert must be bool&quot;</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">score_a_task</span><span class="p">(</span><span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;up&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">revert</span> <span class="k">else</span> <span class="s2">&quot;down&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        
+        <span class="n">statbox</span> <span class="o">=</span> <span class="n">HabiStatBox</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">task</span><span class="p">,</span> <span class="n">statbox</span>
+
+    <span class="c1"># ANCHOR checklist</span>
+    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">add_checklist_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">completed</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;CompletableTask&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">add_a_checklist_item_to_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">completed</span><span class="o">=</span><span class="n">completed</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -407,12 +600,13 @@
         
             <span class="name">CompletableTask</span><span class="signature">(
     id: str,
+    userId: str,
     createdAt: str,
     updatedAt: str,
     text: str,
-    tags: List[str],
+    tags: Tuple[str],
     completed: bool,
-    checklist: List[str]
+    checklist: Tuple[habil.other.subtasks.HabiSubTask]
 )</span>
     </div>
 
@@ -423,7 +617,7 @@
                             <div id="CompletableTask.complete" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#CompletableTask.complete">#&nbsp;&nbsp</a>
 
-                <div class="decorator">@token_required()</div>
+                <div class="decorator">@HabiTokenMeta.acquire_token()</div>
 
             <span class="def">def</span>
             <span class="name">complete</span><span class="signature">(
@@ -435,10 +629,48 @@
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@token_required</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revert</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;CompletableTask&#39;</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">revert</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;revert must be bool&quot;</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">score_a_task</span><span class="p">(</span><span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;up&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">revert</span> <span class="k">else</span> <span class="s2">&quot;down&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        
+        <span class="n">statbox</span> <span class="o">=</span> <span class="n">HabiStatBox</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">task</span><span class="p">,</span> <span class="n">statbox</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            </div>
+                            <div id="CompletableTask.add_checklist_item" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#CompletableTask.add_checklist_item">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@HabiTokenMeta.acquire_token()</div>
+
+            <span class="def">def</span>
+            <span class="name">add_checklist_item</span><span class="signature">(
+    self,
+    text: str,
+    completed: bool = False,
+    token=None
+) -&gt; <a href="#CompletableTask">habil.elements.CompletableTask</a></span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@HabiTokenMeta</span><span class="o">.</span><span class="n">acquire_token</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">add_checklist_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">completed</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;CompletableTask&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">add_a_checklist_item_to_task</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">taskId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">completed</span><span class="o">=</span><span class="n">completed</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_res</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -454,6 +686,9 @@
                 <dd id="CompletableTask.update" class="function"><a href="#AHabiTask.update">update</a></dd>
                 <dd id="CompletableTask.delete" class="function"><a href="#AHabiTask.delete">delete</a></dd>
                 <dd id="CompletableTask.score_task" class="function"><a href="#AHabiTask.score_task">score_task</a></dd>
+                <dd id="CompletableTask.has_tag" class="function"><a href="#AHabiTask.has_tag">has_tag</a></dd>
+                <dd id="CompletableTask.add_tag" class="function"><a href="#AHabiTask.add_tag">add_tag</a></dd>
+                <dd id="CompletableTask.remove_tag" class="function"><a href="#AHabiTask.remove_tag">remove_tag</a></dd>
 
             </div>
             <div><dt><a href="../habil_base/habiUItem.html#HabiUItem">habil_base.habiUItem.HabiUItem</a></dt>

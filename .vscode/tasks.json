@@ -6,7 +6,7 @@
         {
             "label": "create pdoc",
             "type": "shell",
-            "command": "pdoc -o docs habil habil_case habil_ext habil_base habil_map habil_utils"
+            "command": "pdoc habil habil_case habil_ext habil_base habil_map habil_utils -o docs "
         }
     ]
 }

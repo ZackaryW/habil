@@ -31,6 +31,36 @@
         <h2>API Documentation</h2>
             <ul class="memberlist">
             <li>
+                    <a class="class" href="#HabiTokenMeta">HabiTokenMeta</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#HabiTokenMeta.__init__">HabiTokenMeta</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HabiTokenMeta.ROOT">ROOT</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HabiTokenMeta.INSTANCES">INSTANCES</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#HabiTokenMeta.get">get</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#HabiTokenMeta.set">set</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#HabiTokenMeta.set_root">set_root</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#HabiTokenMeta.get_root">get_root</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#HabiTokenMeta.acquire_token">acquire_token</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="class" href="#HabiToken">HabiToken</a>
                             <ul class="memberlist">
                         <li>
@@ -40,16 +70,13 @@
                                 <a class="variable" href="#HabiToken.app_id">app_id</a>
                         </li>
                         <li>
-                                <a class="function" href="#HabiToken.get_global">get_global</a>
+                                <a class="function" href="#HabiToken.get_root">get_root</a>
                         </li>
                         <li>
-                                <a class="function" href="#HabiToken.set_global">set_global</a>
+                                <a class="function" href="#HabiToken.set_root">set_root</a>
                         </li>
                         <li>
                                 <a class="variable" href="#HabiToken.headers">headers</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#HabiToken.getlast">getlast</a>
                         </li>
                         <li>
                                 <a class="function" href="#HabiToken.login">login</a>
@@ -67,7 +94,7 @@
 
             </li>
             <li>
-                    <a class="function" href="#token_required">token_required</a>
+                    <a class="function" href="#acquire_">acquire_</a>
             </li>
     </ul>
 
@@ -95,6 +122,78 @@
 <span class="kn">import</span> <span class="nn">habil_case</span>
 <span class="kn">from</span> <span class="nn">habil_utils</span> <span class="kn">import</span> <span class="n">caller_getattr</span>
 <span class="kn">from</span> <span class="nn">habil_base.exceptions</span> <span class="kn">import</span> <span class="n">HabiMissingTokenException</span><span class="p">,</span> <span class="n">HabiRequestException</span>
+
+<span class="k">class</span> <span class="nc">HabiTokenMeta</span><span class="p">:</span>
+    <span class="n">ROOT</span> <span class="o">=</span><span class="kc">None</span>
+    <span class="n">INSTANCES</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">INSTANCES</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">INSTANCES</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+    
+    <span class="nd">@staticmethod</span>   
+    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+        <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">INSTANCES</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
+    
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">set_root</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+        <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span> <span class="o">=</span> <span class="n">token</span>
+    
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_root</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">acquire_token</span><span class="p">(</span><span class="n">use_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">dig_var</span> <span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">throw_on_missing</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">dig_deep</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+            <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="kc">None</span>
+                
+                <span class="k">if</span> <span class="n">use_root</span> <span class="ow">and</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span>
+
+                <span class="c1"># check if token is already set</span>
+                <span class="k">elif</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;token&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;token&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;token&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="p">(</span>
+                    <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span> 
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">userId</span> <span class="o">:=</span> <span class="n">caller_getattr</span><span class="p">(</span><span class="s2">&quot;userId&quot;</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">token</span> <span class="o">:=</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">userId</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">token</span><span class="o">:=</span><span class="n">caller_getattr</span><span class="p">(</span><span class="s2">&quot;token&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="n">dig_deep</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span>
+
+
+                <span class="c1"># finally</span>
+                <span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No token found&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">throw_on_missing</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">HabiMissingTokenException</span><span class="p">(</span><span class="s2">&quot;No token found&quot;</span><span class="p">)</span>
+
+                <span class="c1"># parse token</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s2">&quot;headers&quot;</span><span class="p">):</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">headers</span>
+                
+                <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">wrapper</span>
+        <span class="k">return</span> <span class="n">decorator</span>
+
+
+
+               
+
+
+
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">HabiToken</span><span class="p">:</span>
     <span class="n">user_id</span> <span class="p">:</span> <span class="nb">str</span>
@@ -106,12 +205,11 @@
             <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;app_id&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span> <span class="o">+</span> <span class="s2">&quot;_habil&quot;</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_global</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_SINGLETON_INSTANCE</span>
+    <span class="k">def</span> <span class="nf">get_root</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span>
 
-    <span class="k">def</span> <span class="nf">set_global</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">global</span> <span class="n">_SINGLETON_INSTANCE</span>
-        <span class="n">_SINGLETON_INSTANCE</span> <span class="o">=</span> <span class="bp">self</span>
+    <span class="k">def</span> <span class="nf">set_root</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">set_root</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">headers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
@@ -122,13 +220,7 @@
         <span class="p">}</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">getlast</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">username</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">appid</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_global</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">username</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">appid</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="n">appid</span><span class="o">=</span><span class="n">appid</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">fail</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
@@ -136,38 +228,35 @@
             <span class="n">user_id</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
             <span class="n">api_token</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">apiToken</span><span class="p">,</span>
             <span class="n">app_id</span><span class="o">=</span><span class="n">appid</span><span class="p">,</span>
-            <span class="n">set_global</span><span class="o">=</span><span class="n">set_global</span>
+            <span class="n">set_root</span><span class="o">=</span><span class="n">set_root</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">token</span>
     
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">user_id</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">api_token</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">app_id</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_global</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">user_id</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">api_token</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">app_id</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
         <span class="n">token</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span> <span class="n">api_token</span><span class="o">=</span><span class="n">api_token</span><span class="p">,</span> <span class="n">app_id</span><span class="o">=</span><span class="n">app_id</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">set_global</span><span class="p">:</span>
-            <span class="n">token</span><span class="o">.</span><span class="n">set_global</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">set_root</span><span class="p">:</span>
+            <span class="n">token</span><span class="o">.</span><span class="n">set_root</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">token</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">set_global</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">set_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
             <span class="n">user_id</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
             <span class="n">api_token</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;api_token&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
             <span class="n">app_id</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;app_id&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
-            <span class="n">set_global</span><span class="o">=</span><span class="n">set_global</span>
+            <span class="n">set_root</span><span class="o">=</span><span class="n">set_root</span>
         <span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">jsonpath</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">set_global</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">jsonpath</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">set_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">jsonpath</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">set_global</span><span class="o">=</span><span class="n">set_global</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">set_root</span><span class="o">=</span><span class="n">set_root</span><span class="p">)</span>
 
 
-<span class="c1"># ANCHOR global token </span>
-<span class="n">_SINGLETON_INSTANCE</span> <span class="o">=</span> <span class="kc">None</span>
-
-<span class="k">def</span> <span class="nf">token_required</span><span class="p">(</span><span class="n">glob</span> <span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dig</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dig_deep</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">throw</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">callable</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">acquire_</span><span class="p">(</span><span class="n">glob</span> <span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dig</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dig_deep</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">throw</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">callable</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -193,7 +282,7 @@
             
             <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;missing token&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">throw</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">HabiMissingTokenException</span><span class="p">(</span><span class="s2">&quot;token is required [token_required]&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">HabiMissingTokenException</span><span class="p">(</span><span class="s2">&quot;token is required [HabiTokenMeta]&quot;</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 
@@ -204,6 +293,270 @@
         </details>
 
             </section>
+                <section id="HabiTokenMeta">
+                                <div class="attr class">
+        <a class="headerlink" href="#HabiTokenMeta">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">HabiTokenMeta</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="k">class</span> <span class="nc">HabiTokenMeta</span><span class="p">:</span>
+    <span class="n">ROOT</span> <span class="o">=</span><span class="kc">None</span>
+    <span class="n">INSTANCES</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">INSTANCES</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">INSTANCES</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+    
+    <span class="nd">@staticmethod</span>   
+    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+        <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">INSTANCES</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
+    
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">set_root</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+        <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span> <span class="o">=</span> <span class="n">token</span>
+    
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_root</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">acquire_token</span><span class="p">(</span><span class="n">use_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">dig_var</span> <span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">throw_on_missing</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">dig_deep</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+            <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="kc">None</span>
+                
+                <span class="k">if</span> <span class="n">use_root</span> <span class="ow">and</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span>
+
+                <span class="c1"># check if token is already set</span>
+                <span class="k">elif</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;token&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;token&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;token&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="p">(</span>
+                    <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span> 
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">userId</span> <span class="o">:=</span> <span class="n">caller_getattr</span><span class="p">(</span><span class="s2">&quot;userId&quot;</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">token</span> <span class="o">:=</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">userId</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">token</span><span class="o">:=</span><span class="n">caller_getattr</span><span class="p">(</span><span class="s2">&quot;token&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="n">dig_deep</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span>
+
+
+                <span class="c1"># finally</span>
+                <span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No token found&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">throw_on_missing</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">HabiMissingTokenException</span><span class="p">(</span><span class="s2">&quot;No token found&quot;</span><span class="p">)</span>
+
+                <span class="c1"># parse token</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s2">&quot;headers&quot;</span><span class="p">):</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">headers</span>
+                
+                <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">wrapper</span>
+        <span class="k">return</span> <span class="n">decorator</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            <div id="HabiTokenMeta.__init__" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#HabiTokenMeta.__init__">#&nbsp;&nbsp</a>
+
+        
+            <span class="name">HabiTokenMeta</span><span class="signature">()</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiTokenMeta.ROOT" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiTokenMeta.ROOT">#&nbsp;&nbsp</a>
+
+        <span class="name">ROOT</span><span class="default_value"> = None</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiTokenMeta.INSTANCES" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiTokenMeta.INSTANCES">#&nbsp;&nbsp</a>
+
+        <span class="name">INSTANCES</span><span class="default_value"> = {}</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiTokenMeta.get" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#HabiTokenMeta.get">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@staticmethod</div>
+
+            <span class="def">def</span>
+            <span class="name">get</span><span class="signature">(id)</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">INSTANCES</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">INSTANCES</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            </div>
+                            <div id="HabiTokenMeta.set" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#HabiTokenMeta.set">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@staticmethod</div>
+
+            <span class="def">def</span>
+            <span class="name">set</span><span class="signature">(id, token)</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@staticmethod</span>   
+    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+        <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">INSTANCES</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            </div>
+                            <div id="HabiTokenMeta.set_root" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#HabiTokenMeta.set_root">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@staticmethod</div>
+
+            <span class="def">def</span>
+            <span class="name">set_root</span><span class="signature">(token)</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">set_root</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+        <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span> <span class="o">=</span> <span class="n">token</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            </div>
+                            <div id="HabiTokenMeta.get_root" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#HabiTokenMeta.get_root">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@staticmethod</div>
+
+            <span class="def">def</span>
+            <span class="name">get_root</span><span class="signature">() -&gt; <a href="#HabiToken">habil_base.habiToken.HabiToken</a></span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_root</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            </div>
+                            <div id="HabiTokenMeta.acquire_token" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#HabiTokenMeta.acquire_token">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@staticmethod</div>
+
+            <span class="def">def</span>
+            <span class="name">acquire_token</span><span class="signature">(
+    use_root: bool = False,
+    dig_var: bool = False,
+    throw_on_missing: bool = False,
+    dig_deep: bool = False
+) -&gt; <a href="#HabiToken">habil_base.habiToken.HabiToken</a></span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">acquire_token</span><span class="p">(</span><span class="n">use_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">dig_var</span> <span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">throw_on_missing</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">dig_deep</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+            <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="kc">None</span>
+                
+                <span class="k">if</span> <span class="n">use_root</span> <span class="ow">and</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span>
+
+                <span class="c1"># check if token is already set</span>
+                <span class="k">elif</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;token&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;token&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;token&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="p">(</span>
+                    <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span> 
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">userId</span> <span class="o">:=</span> <span class="n">caller_getattr</span><span class="p">(</span><span class="s2">&quot;userId&quot;</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">token</span> <span class="o">:=</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">userId</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">token</span><span class="o">:=</span><span class="n">caller_getattr</span><span class="p">(</span><span class="s2">&quot;token&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="n">dig_deep</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span>
+
+
+                <span class="c1"># finally</span>
+                <span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No token found&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">throw_on_missing</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">HabiMissingTokenException</span><span class="p">(</span><span class="s2">&quot;No token found&quot;</span><span class="p">)</span>
+
+                <span class="c1"># parse token</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s2">&quot;headers&quot;</span><span class="p">):</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">headers</span>
+                
+                <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">wrapper</span>
+        <span class="k">return</span> <span class="n">decorator</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            </div>
+                </section>
                 <section id="HabiToken">
                                 <div class="attr class">
         <a class="headerlink" href="#HabiToken">#&nbsp;&nbsp</a>
@@ -227,12 +580,11 @@
             <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;app_id&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span> <span class="o">+</span> <span class="s2">&quot;_habil&quot;</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_global</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_SINGLETON_INSTANCE</span>
+    <span class="k">def</span> <span class="nf">get_root</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span>
 
-    <span class="k">def</span> <span class="nf">set_global</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">global</span> <span class="n">_SINGLETON_INSTANCE</span>
-        <span class="n">_SINGLETON_INSTANCE</span> <span class="o">=</span> <span class="bp">self</span>
+    <span class="k">def</span> <span class="nf">set_root</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">set_root</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">headers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
@@ -243,13 +595,7 @@
         <span class="p">}</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">getlast</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">username</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">appid</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_global</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">username</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">appid</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="n">appid</span><span class="o">=</span><span class="n">appid</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">fail</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
@@ -257,32 +603,32 @@
             <span class="n">user_id</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
             <span class="n">api_token</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">apiToken</span><span class="p">,</span>
             <span class="n">app_id</span><span class="o">=</span><span class="n">appid</span><span class="p">,</span>
-            <span class="n">set_global</span><span class="o">=</span><span class="n">set_global</span>
+            <span class="n">set_root</span><span class="o">=</span><span class="n">set_root</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">token</span>
     
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">user_id</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">api_token</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">app_id</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_global</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">user_id</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">api_token</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">app_id</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
         <span class="n">token</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span> <span class="n">api_token</span><span class="o">=</span><span class="n">api_token</span><span class="p">,</span> <span class="n">app_id</span><span class="o">=</span><span class="n">app_id</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">set_global</span><span class="p">:</span>
-            <span class="n">token</span><span class="o">.</span><span class="n">set_global</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">set_root</span><span class="p">:</span>
+            <span class="n">token</span><span class="o">.</span><span class="n">set_root</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">token</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">set_global</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">set_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
             <span class="n">user_id</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
             <span class="n">api_token</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;api_token&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
             <span class="n">app_id</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;app_id&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
-            <span class="n">set_global</span><span class="o">=</span><span class="n">set_global</span>
+            <span class="n">set_root</span><span class="o">=</span><span class="n">set_root</span>
         <span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">jsonpath</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">set_global</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">jsonpath</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">set_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">jsonpath</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">set_global</span><span class="o">=</span><span class="n">set_global</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">set_root</span><span class="o">=</span><span class="n">set_root</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -312,20 +658,20 @@
     
 
                             </div>
-                            <div id="HabiToken.get_global" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#HabiToken.get_global">#&nbsp;&nbsp</a>
+                            <div id="HabiToken.get_root" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#HabiToken.get_root">#&nbsp;&nbsp</a>
 
                 <div class="decorator">@staticmethod</div>
 
             <span class="def">def</span>
-            <span class="name">get_global</span><span class="signature">() -&gt; <a href="#HabiToken">habil_base.habiToken.HabiToken</a></span>:
+            <span class="name">get_root</span><span class="signature">() -&gt; <a href="#HabiToken">habil_base.habiToken.HabiToken</a></span>:
     </div>
 
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_global</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_SINGLETON_INSTANCE</span>
+    <span class="k">def</span> <span class="nf">get_root</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">ROOT</span>
 </pre></div>
 
         </details>
@@ -333,19 +679,18 @@
     
 
                             </div>
-                            <div id="HabiToken.set_global" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#HabiToken.set_global">#&nbsp;&nbsp</a>
+                            <div id="HabiToken.set_root" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#HabiToken.set_root">#&nbsp;&nbsp</a>
 
         
             <span class="def">def</span>
-            <span class="name">set_global</span><span class="signature">(self) -&gt; None</span>:
+            <span class="name">set_root</span><span class="signature">(self) -&gt; None</span>:
     </div>
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">set_global</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">global</span> <span class="n">_SINGLETON_INSTANCE</span>
-        <span class="n">_SINGLETON_INSTANCE</span> <span class="o">=</span> <span class="bp">self</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">set_root</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">HabiTokenMeta</span><span class="o">.</span><span class="n">set_root</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -363,29 +708,6 @@
     
 
                             </div>
-                            <div id="HabiToken.getlast" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#HabiToken.getlast">#&nbsp;&nbsp</a>
-
-                <div class="decorator">@classmethod</div>
-
-            <span class="def">def</span>
-            <span class="name">getlast</span><span class="signature">(cls) -&gt; <a href="#HabiToken">habil_base.habiToken.HabiToken</a></span>:
-    </div>
-
-            <details>
-            <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">getlast</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-</pre></div>
-
-        </details>
-
-    
-
-                            </div>
                             <div id="HabiToken.login" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#HabiToken.login">#&nbsp;&nbsp</a>
 
@@ -397,14 +719,14 @@
     username: str,
     password: str,
     appid: str = None,
-    set_global: bool = False
+    set_root: bool = False
 ) -&gt; <a href="#HabiToken">habil_base.habiToken.HabiToken</a></span>:
     </div>
 
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">username</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">appid</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_global</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">username</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">appid</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">habil_case</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="n">appid</span><span class="o">=</span><span class="n">appid</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">fail</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HabiRequestException</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
@@ -412,7 +734,7 @@
             <span class="n">user_id</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
             <span class="n">api_token</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">apiToken</span><span class="p">,</span>
             <span class="n">app_id</span><span class="o">=</span><span class="n">appid</span><span class="p">,</span>
-            <span class="n">set_global</span><span class="o">=</span><span class="n">set_global</span>
+            <span class="n">set_root</span><span class="o">=</span><span class="n">set_root</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">token</span>
 </pre></div>
@@ -433,17 +755,17 @@
     user_id: str,
     api_token: str,
     app_id: str = None,
-    set_global: bool = False
+    set_root: bool = False
 ) -&gt; <a href="#HabiToken">habil_base.habiToken.HabiToken</a></span>:
     </div>
 
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">user_id</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">api_token</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">app_id</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_global</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">user_id</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">api_token</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">app_id</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
         <span class="n">token</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span> <span class="n">api_token</span><span class="o">=</span><span class="n">api_token</span><span class="p">,</span> <span class="n">app_id</span><span class="o">=</span><span class="n">app_id</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">set_global</span><span class="p">:</span>
-            <span class="n">token</span><span class="o">.</span><span class="n">set_global</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">set_root</span><span class="p">:</span>
+            <span class="n">token</span><span class="o">.</span><span class="n">set_root</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">token</span>
 </pre></div>
 
@@ -461,19 +783,19 @@
             <span class="name">from_dict</span><span class="signature">(
     cls,
     data: dict,
-    set_global: bool = False
+    set_root: bool = False
 ) -&gt; <a href="#HabiToken">habil_base.habiToken.HabiToken</a></span>:
     </div>
 
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">set_global</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">set_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
             <span class="n">user_id</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
             <span class="n">api_token</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;api_token&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
             <span class="n">app_id</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;app_id&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
-            <span class="n">set_global</span><span class="o">=</span><span class="n">set_global</span>
+            <span class="n">set_root</span><span class="o">=</span><span class="n">set_root</span>
         <span class="p">)</span>
 </pre></div>
 
@@ -491,18 +813,18 @@
             <span class="name">from_json</span><span class="signature">(
     cls,
     jsonpath: str,
-    set_global: bool = False
+    set_root: bool = False
 ) -&gt; <a href="#HabiToken">habil_base.habiToken.HabiToken</a></span>:
     </div>
 
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">jsonpath</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">set_global</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">jsonpath</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">set_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiToken&#39;</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">jsonpath</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">set_global</span><span class="o">=</span><span class="n">set_global</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">set_root</span><span class="o">=</span><span class="n">set_root</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -511,12 +833,12 @@
 
                             </div>
                 </section>
-                <section id="token_required">
-                            <div class="attr function"><a class="headerlink" href="#token_required">#&nbsp;&nbsp</a>
+                <section id="acquire_">
+                            <div class="attr function"><a class="headerlink" href="#acquire_">#&nbsp;&nbsp</a>
 
         
             <span class="def">def</span>
-            <span class="name">token_required</span><span class="signature">(
+            <span class="name">acquire_</span><span class="signature">(
     glob: bool = True,
     dig: bool = True,
     dig_deep: bool = False,
@@ -526,7 +848,7 @@
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">token_required</span><span class="p">(</span><span class="n">glob</span> <span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dig</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dig_deep</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">throw</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">callable</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">acquire_</span><span class="p">(</span><span class="n">glob</span> <span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dig</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dig_deep</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">throw</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">callable</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -552,7 +874,7 @@
             
             <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;missing token&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">throw</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">HabiMissingTokenException</span><span class="p">(</span><span class="s2">&quot;token is required [token_required]&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">HabiMissingTokenException</span><span class="p">(</span><span class="s2">&quot;token is required [HabiTokenMeta]&quot;</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 

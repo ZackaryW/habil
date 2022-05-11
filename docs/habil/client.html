@@ -31,28 +31,37 @@
         <h2>API Documentation</h2>
             <ul class="memberlist">
             <li>
+                    <a class="class" href="#HabiClientCategory">HabiClientCategory</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#HabiClientCategory.__init__">HabiClientCategory</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HabiClientCategory.TASK">TASK</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HabiClientCategory.TAG">TAG</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HabiClientCategory.REWARD">REWARD</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HabiClientCategory.HABIT">HABIT</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HabiClientCategory.DAILY">DAILY</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HabiClientCategory.TODO">TODO</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="class" href="#HabiClient">HabiClient</a>
                             <ul class="memberlist">
                         <li>
                                 <a class="function" href="#HabiClient.__init__">HabiClient</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#HabiClient.TASK">TASK</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#HabiClient.TAG">TAG</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#HabiClient.REWARD">REWARD</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#HabiClient.HABIT">HABIT</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#HabiClient.DAILY">DAILY</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#HabiClient.TODO">TODO</a>
                         </li>
                         <li>
                                 <a class="function" href="#HabiClient.get">get</a>
@@ -73,16 +82,49 @@
                                 <a class="variable" href="#HabiClient.tasks">tasks</a>
                         </li>
                         <li>
+                                <a class="variable" href="#HabiClient.tasks_cached">tasks_cached</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#HabiClient.tags">tags</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HabiClient.tags_cached">tags_cached</a>
                         </li>
                         <li>
                                 <a class="variable" href="#HabiClient.profile">profile</a>
                         </li>
                         <li>
+                                <a class="variable" href="#HabiClient.profile_cached">profile_cached</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HabiClient.dailys">dailys</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HabiClient.dailys_cached">dailys_cached</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HabiClient.habits">habits</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HabiClient.habits_cached">habits_cached</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HabiClient.rewards">rewards</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HabiClient.rewards_cached">rewards_cached</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HabiClient.todos">todos</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HabiClient.todos_cached">todos_cached</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#HabiClient.CONFIG_GLOBAL_TAGS_refresh_interval">CONFIG_GLOBAL_TAGS_refresh_interval</a>
                         </li>
                         <li>
-                                <a class="variable" href="#HabiClient.CONFIG_GLOBAL_TAGS_refresh_interval_setter">CONFIG_GLOBAL_TAGS_refresh_interval_setter</a>
+                                <a class="variable" href="#HabiClient.CONFIG_TASKS_cache_expire_seconds">CONFIG_TASKS_cache_expire_seconds</a>
                         </li>
                         <li>
                                 <a class="variable" href="#HabiClient.STAT_rate_limit_remaining">STAT_rate_limit_remaining</a>
@@ -110,9 +152,13 @@
                         <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">import</span> <span class="nn">dataclasses</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 <span class="kn">import</span> <span class="nn">typing</span>
-<span class="kn">from</span> <span class="nn">habil.profile</span> <span class="kn">import</span> <span class="n">HabiProfile</span><span class="p">,</span> <span class="n">HabiStatBox</span>
+<span class="kn">from</span> <span class="nn">habil.elements.daily</span> <span class="kn">import</span> <span class="n">HabiDaily</span>
+<span class="kn">from</span> <span class="nn">habil.elements.habit</span> <span class="kn">import</span> <span class="n">HabiHabit</span>
+<span class="kn">from</span> <span class="nn">habil.elements.reward</span> <span class="kn">import</span> <span class="n">HabiReward</span>
+<span class="kn">from</span> <span class="nn">habil.elements.todo</span> <span class="kn">import</span> <span class="n">HabiTodo</span>
+<span class="kn">from</span> <span class="nn">habil.other.profile</span> <span class="kn">import</span> <span class="n">HabiProfile</span><span class="p">,</span> <span class="n">HabiStatBox</span>
 <span class="kn">from</span> <span class="nn">habil.sub.tag</span> <span class="kn">import</span> <span class="n">HabiTag</span><span class="p">,</span> <span class="n">HabiTagMeta</span>
 <span class="kn">from</span> <span class="nn">habil_base.exceptions</span> <span class="kn">import</span> <span class="n">HabiMissingTokenException</span>
 <span class="kn">from</span> <span class="nn">habil_base.habiToken</span> <span class="kn">import</span> <span class="n">HabiToken</span>
@@ -120,25 +166,28 @@
 <span class="kn">from</span> <span class="nn">habil_utils</span> <span class="kn">import</span> <span class="n">FrozenClass</span>
 <span class="kn">from</span> <span class="nn">habil_map.habiMapMeta</span> <span class="kn">import</span> <span class="n">HabiMapMeta</span>
 
-<span class="k">class</span> <span class="nc">HabiClient</span><span class="p">(</span><span class="n">FrozenClass</span><span class="p">):</span>
-    
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span> <span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">HabiToken</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">token</span> <span class="o">=</span> <span class="n">HabiToken</span><span class="o">.</span><span class="n">get_global</span><span class="p">()</span>
-        
-        <span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">HabiMissingTokenException</span><span class="p">(</span><span class="s2">&quot;No token found&quot;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="p">:</span> <span class="n">HabiToken</span> <span class="o">=</span> <span class="n">token</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_freeze</span><span class="p">()</span>
-
+<span class="k">class</span> <span class="nc">HabiClientCategory</span><span class="p">:</span>
     <span class="n">TASK</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">TAG</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">REWARD</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">HABIT</span> <span class="o">=</span> <span class="mi">3</span>
     <span class="n">DAILY</span> <span class="o">=</span> <span class="mi">4</span>
     <span class="n">TODO</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="k">class</span> <span class="nc">HabiClient</span><span class="p">(</span><span class="n">FrozenClass</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span> <span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">HabiToken</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="n">HabiToken</span><span class="o">.</span><span class="n">get_root</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HabiMissingTokenException</span><span class="p">(</span><span class="s2">&quot;No token found&quot;</span><span class="p">)</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="p">:</span> <span class="n">HabiToken</span> <span class="o">=</span> <span class="n">token</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_fetch_timestamp</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_freeze</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span> <span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">id</span> <span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">match</span> <span class="n">category</span><span class="p">:</span>
@@ -153,10 +202,19 @@
             <span class="k">case</span> <span class="k">_</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     
+    <span class="c1"># ANCHOR internals</span>
+    <span class="k">def</span> <span class="nf">_set_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_last_fetch_timestamp&quot;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_need_to_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_fetch_timestamp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CONFIG_TASKS_cache_expire_seconds</span><span class="p">))</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_fetch_timestamp</span>
+
     <span class="c1"># ANCHOR classmethods</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">username</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">appid</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_global</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiClient&#39;</span><span class="p">:</span>
-        <span class="n">token</span> <span class="o">=</span> <span class="n">HabiToken</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="n">appid</span><span class="o">=</span><span class="n">appid</span><span class="p">,</span> <span class="n">set_global</span><span class="o">=</span><span class="n">set_global</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">username</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">appid</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiClient&#39;</span><span class="p">:</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">HabiToken</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="n">appid</span><span class="o">=</span><span class="n">appid</span><span class="p">,</span> <span class="n">set_root</span><span class="o">=</span><span class="n">set_root</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
@@ -174,16 +232,100 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of all tasks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_to_fetch</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks_cached</span>
+
         <span class="n">HabiTag</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">HabiTasking</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">HabiTasking</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_timestamp</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ret</span>
     
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tasks_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of all tasks from cache</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_lists</span> <span class="o">=</span><span class="p">[]</span>
+        <span class="n">all_lists</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">HabiDaily</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">))</span>
+        <span class="n">all_lists</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">HabiHabit</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">))</span>
+        <span class="n">all_lists</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">HabiTodo</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">))</span>
+        <span class="n">all_lists</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">HabiReward</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">all_lists</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of all tags</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_to_fetch</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags_cached</span>
         <span class="k">return</span> <span class="n">HabiTag</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tags_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of all tags from cache</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">HabiTag</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">profile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">HabiProfile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">profile_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">HabiProfile</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dailys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_to_fetch</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dailys_cached</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tasks</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">HabiDaily</span><span class="p">)]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dailys_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">HabiDaily</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">habits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_to_fetch</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">habits_cached</span>
+
+        <span class="n">tasks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tasks</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">HabiHabit</span><span class="p">)]</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">habits_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">HabiHabit</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rewards</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_to_fetch</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewards_cached</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tasks</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">HabiReward</span><span class="p">)]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rewards_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">HabiReward</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">todos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_to_fetch</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">todos_cached</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tasks</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">HabiTodo</span><span class="p">)]</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">todos_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">HabiTodo</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span>
 
     <span class="c1"># ANCHOR config properties</span>
     <span class="nd">@property</span>
@@ -191,8 +333,27 @@
         <span class="k">return</span> <span class="n">HabiTagMeta</span><span class="o">.</span><span class="n">PULL_INTERVAL</span>
     
     <span class="nd">@CONFIG_GLOBAL_TAGS_refresh_interval</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">CONFIG_GLOBAL_TAGS_refresh_interval_setter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">CONFIG_GLOBAL_TAGS_refresh_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="n">HabiTagMeta</span><span class="o">.</span><span class="n">PULL_INTERVAL</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">CONFIG_TASKS_cache_expire_seconds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        this property sets the time in seconds that the cache will be called instead of remote\n</span>
+<span class="sd">        default is 0, meaning that the client by default will fetch from api every time\n</span>
+<span class="sd">        is only valid for tasks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_CONFIG_TASKS_cache_expire_seconds&quot;</span><span class="p">):</span>
+            <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_CONFIG_TASKS_cache_expire_seconds&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CONFIG_TASKS_cache_expire_seconds</span>
+
+    <span class="nd">@CONFIG_TASKS_cache_expire_seconds</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">CONFIG_TASKS_cache_expire_seconds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;CONFIG_TASKS_cache_expire_seconds must be an integer&quot;</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_CONFIG_TASKS_cache_expire_seconds&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
 
     <span class="c1"># ANCHOR stats</span>
     <span class="nd">@property</span>
@@ -203,6 +364,102 @@
         </details>
 
             </section>
+                <section id="HabiClientCategory">
+                                <div class="attr class">
+        <a class="headerlink" href="#HabiClientCategory">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">HabiClientCategory</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="k">class</span> <span class="nc">HabiClientCategory</span><span class="p">:</span>
+    <span class="n">TASK</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">TAG</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">REWARD</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">HABIT</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">DAILY</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">TODO</span> <span class="o">=</span> <span class="mi">5</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            <div id="HabiClientCategory.__init__" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#HabiClientCategory.__init__">#&nbsp;&nbsp</a>
+
+        
+            <span class="name">HabiClientCategory</span><span class="signature">()</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiClientCategory.TASK" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClientCategory.TASK">#&nbsp;&nbsp</a>
+
+        <span class="name">TASK</span><span class="default_value"> = 0</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiClientCategory.TAG" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClientCategory.TAG">#&nbsp;&nbsp</a>
+
+        <span class="name">TAG</span><span class="default_value"> = 1</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiClientCategory.REWARD" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClientCategory.REWARD">#&nbsp;&nbsp</a>
+
+        <span class="name">REWARD</span><span class="default_value"> = 2</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiClientCategory.HABIT" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClientCategory.HABIT">#&nbsp;&nbsp</a>
+
+        <span class="name">HABIT</span><span class="default_value"> = 3</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiClientCategory.DAILY" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClientCategory.DAILY">#&nbsp;&nbsp</a>
+
+        <span class="name">DAILY</span><span class="default_value"> = 4</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiClientCategory.TODO" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClientCategory.TODO">#&nbsp;&nbsp</a>
+
+        <span class="name">TODO</span><span class="default_value"> = 5</span>
+    </div>
+
+    
+    
+
+                            </div>
+                </section>
                 <section id="HabiClient">
                                 <div class="attr class">
         <a class="headerlink" href="#HabiClient">#&nbsp;&nbsp</a>
@@ -215,24 +472,19 @@
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span><span class="k">class</span> <span class="nc">HabiClient</span><span class="p">(</span><span class="n">FrozenClass</span><span class="p">):</span>
-    
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span> <span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">HabiToken</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">token</span> <span class="o">=</span> <span class="n">HabiToken</span><span class="o">.</span><span class="n">get_global</span><span class="p">()</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="n">HabiToken</span><span class="o">.</span><span class="n">get_root</span><span class="p">()</span>
         
         <span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HabiMissingTokenException</span><span class="p">(</span><span class="s2">&quot;No token found&quot;</span><span class="p">)</span>
-
+            
         <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="p">:</span> <span class="n">HabiToken</span> <span class="o">=</span> <span class="n">token</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_freeze</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_fetch_timestamp</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="n">TASK</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">TAG</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">REWARD</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">HABIT</span> <span class="o">=</span> <span class="mi">3</span>
-    <span class="n">DAILY</span> <span class="o">=</span> <span class="mi">4</span>
-    <span class="n">TODO</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_freeze</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span> <span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">id</span> <span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">match</span> <span class="n">category</span><span class="p">:</span>
@@ -247,10 +499,19 @@
             <span class="k">case</span> <span class="k">_</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     
+    <span class="c1"># ANCHOR internals</span>
+    <span class="k">def</span> <span class="nf">_set_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_last_fetch_timestamp&quot;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_need_to_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_fetch_timestamp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CONFIG_TASKS_cache_expire_seconds</span><span class="p">))</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_fetch_timestamp</span>
+
     <span class="c1"># ANCHOR classmethods</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">username</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">appid</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_global</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiClient&#39;</span><span class="p">:</span>
-        <span class="n">token</span> <span class="o">=</span> <span class="n">HabiToken</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="n">appid</span><span class="o">=</span><span class="n">appid</span><span class="p">,</span> <span class="n">set_global</span><span class="o">=</span><span class="n">set_global</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">username</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">appid</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiClient&#39;</span><span class="p">:</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">HabiToken</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="n">appid</span><span class="o">=</span><span class="n">appid</span><span class="p">,</span> <span class="n">set_root</span><span class="o">=</span><span class="n">set_root</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
@@ -268,16 +529,100 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of all tasks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_to_fetch</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks_cached</span>
+
         <span class="n">HabiTag</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">HabiTasking</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">HabiTasking</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_timestamp</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ret</span>
     
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tasks_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of all tasks from cache</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_lists</span> <span class="o">=</span><span class="p">[]</span>
+        <span class="n">all_lists</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">HabiDaily</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">))</span>
+        <span class="n">all_lists</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">HabiHabit</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">))</span>
+        <span class="n">all_lists</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">HabiTodo</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">))</span>
+        <span class="n">all_lists</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">HabiReward</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">all_lists</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of all tags</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_to_fetch</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags_cached</span>
         <span class="k">return</span> <span class="n">HabiTag</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tags_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of all tags from cache</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">HabiTag</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">profile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">HabiProfile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">profile_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">HabiProfile</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dailys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_to_fetch</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dailys_cached</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tasks</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">HabiDaily</span><span class="p">)]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dailys_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">HabiDaily</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">habits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_to_fetch</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">habits_cached</span>
+
+        <span class="n">tasks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tasks</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">HabiHabit</span><span class="p">)]</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">habits_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">HabiHabit</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rewards</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_to_fetch</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewards_cached</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tasks</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">HabiReward</span><span class="p">)]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rewards_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">HabiReward</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">todos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_to_fetch</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">todos_cached</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tasks</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">HabiTodo</span><span class="p">)]</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">todos_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">HabiTodo</span><span class="o">.</span><span class="n">get_by_userid</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span>
 
     <span class="c1"># ANCHOR config properties</span>
     <span class="nd">@property</span>
@@ -285,8 +630,27 @@
         <span class="k">return</span> <span class="n">HabiTagMeta</span><span class="o">.</span><span class="n">PULL_INTERVAL</span>
     
     <span class="nd">@CONFIG_GLOBAL_TAGS_refresh_interval</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">CONFIG_GLOBAL_TAGS_refresh_interval_setter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">CONFIG_GLOBAL_TAGS_refresh_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="n">HabiTagMeta</span><span class="o">.</span><span class="n">PULL_INTERVAL</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">CONFIG_TASKS_cache_expire_seconds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        this property sets the time in seconds that the cache will be called instead of remote\n</span>
+<span class="sd">        default is 0, meaning that the client by default will fetch from api every time\n</span>
+<span class="sd">        is only valid for tasks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_CONFIG_TASKS_cache_expire_seconds&quot;</span><span class="p">):</span>
+            <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_CONFIG_TASKS_cache_expire_seconds&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CONFIG_TASKS_cache_expire_seconds</span>
+
+    <span class="nd">@CONFIG_TASKS_cache_expire_seconds</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">CONFIG_TASKS_cache_expire_seconds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;CONFIG_TASKS_cache_expire_seconds must be an integer&quot;</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_CONFIG_TASKS_cache_expire_seconds&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
 
     <span class="c1"># ANCHOR stats</span>
     <span class="nd">@property</span>
@@ -309,77 +673,20 @@
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span> <span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">HabiToken</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">token</span> <span class="o">=</span> <span class="n">HabiToken</span><span class="o">.</span><span class="n">get_global</span><span class="p">()</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="n">HabiToken</span><span class="o">.</span><span class="n">get_root</span><span class="p">()</span>
         
         <span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HabiMissingTokenException</span><span class="p">(</span><span class="s2">&quot;No token found&quot;</span><span class="p">)</span>
-
+            
         <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="p">:</span> <span class="n">HabiToken</span> <span class="o">=</span> <span class="n">token</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_fetch_timestamp</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_freeze</span><span class="p">()</span>
 </pre></div>
 
         </details>
 
-    
-
-                            </div>
-                            <div id="HabiClient.TASK" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.TASK">#&nbsp;&nbsp</a>
-
-        <span class="name">TASK</span><span class="default_value"> = 0</span>
-    </div>
-
-    
-    
-
-                            </div>
-                            <div id="HabiClient.TAG" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.TAG">#&nbsp;&nbsp</a>
-
-        <span class="name">TAG</span><span class="default_value"> = 1</span>
-    </div>
-
-    
-    
-
-                            </div>
-                            <div id="HabiClient.REWARD" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.REWARD">#&nbsp;&nbsp</a>
-
-        <span class="name">REWARD</span><span class="default_value"> = 2</span>
-    </div>
-
-    
-    
-
-                            </div>
-                            <div id="HabiClient.HABIT" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.HABIT">#&nbsp;&nbsp</a>
-
-        <span class="name">HABIT</span><span class="default_value"> = 3</span>
-    </div>
-
-    
-    
-
-                            </div>
-                            <div id="HabiClient.DAILY" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.DAILY">#&nbsp;&nbsp</a>
-
-        <span class="name">DAILY</span><span class="default_value"> = 4</span>
-    </div>
-
-    
-    
-
-                            </div>
-                            <div id="HabiClient.TODO" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.TODO">#&nbsp;&nbsp</a>
-
-        <span class="name">TODO</span><span class="default_value"> = 5</span>
-    </div>
-
-    
     
 
                             </div>
@@ -438,15 +745,15 @@
     username: str,
     password: str,
     appid: str = None,
-    set_global: bool = False
+    set_root: bool = False
 ) -&gt; <a href="#HabiClient">habil.client.HabiClient</a></span>:
     </div>
 
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">username</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">appid</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_global</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiClient&#39;</span><span class="p">:</span>
-        <span class="n">token</span> <span class="o">=</span> <span class="n">HabiToken</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="n">appid</span><span class="o">=</span><span class="n">appid</span><span class="p">,</span> <span class="n">set_global</span><span class="o">=</span><span class="n">set_global</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">username</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">appid</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_root</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;HabiClient&#39;</span><span class="p">:</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">HabiToken</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="n">appid</span><span class="o">=</span><span class="n">appid</span><span class="p">,</span> <span class="n">set_root</span><span class="o">=</span><span class="n">set_root</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
 </pre></div>
 
@@ -503,7 +810,21 @@
     </div>
 
     
+            <div class="docstring"><p>Returns a list of all tasks</p>
+</div>
+
+
+                            </div>
+                            <div id="HabiClient.tasks_cached" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.tasks_cached">#&nbsp;&nbsp</a>
+
+        <span class="name">tasks_cached</span>
+    </div>
+
     
+            <div class="docstring"><p>Returns a list of all tasks from cache</p>
+</div>
+
 
                             </div>
                             <div id="HabiClient.tags" class="classattr">
@@ -513,13 +834,117 @@
     </div>
 
     
+            <div class="docstring"><p>Returns a list of all tags</p>
+</div>
+
+
+                            </div>
+                            <div id="HabiClient.tags_cached" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.tags_cached">#&nbsp;&nbsp</a>
+
+        <span class="name">tags_cached</span>
+    </div>
+
     
+            <div class="docstring"><p>Returns a list of all tags from cache</p>
+</div>
+
 
                             </div>
                             <div id="HabiClient.profile" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#HabiClient.profile">#&nbsp;&nbsp</a>
 
         <span class="name">profile</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiClient.profile_cached" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.profile_cached">#&nbsp;&nbsp</a>
+
+        <span class="name">profile_cached</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiClient.dailys" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.dailys">#&nbsp;&nbsp</a>
+
+        <span class="name">dailys</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiClient.dailys_cached" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.dailys_cached">#&nbsp;&nbsp</a>
+
+        <span class="name">dailys_cached</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiClient.habits" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.habits">#&nbsp;&nbsp</a>
+
+        <span class="name">habits</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiClient.habits_cached" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.habits_cached">#&nbsp;&nbsp</a>
+
+        <span class="name">habits_cached</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiClient.rewards" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.rewards">#&nbsp;&nbsp</a>
+
+        <span class="name">rewards</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiClient.rewards_cached" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.rewards_cached">#&nbsp;&nbsp</a>
+
+        <span class="name">rewards_cached</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiClient.todos" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.todos">#&nbsp;&nbsp</a>
+
+        <span class="name">todos</span>
+    </div>
+
+    
+    
+
+                            </div>
+                            <div id="HabiClient.todos_cached" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.todos_cached">#&nbsp;&nbsp</a>
+
+        <span class="name">todos_cached</span>
     </div>
 
     
@@ -536,14 +961,20 @@
     
 
                             </div>
-                            <div id="HabiClient.CONFIG_GLOBAL_TAGS_refresh_interval_setter" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.CONFIG_GLOBAL_TAGS_refresh_interval_setter">#&nbsp;&nbsp</a>
+                            <div id="HabiClient.CONFIG_TASKS_cache_expire_seconds" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HabiClient.CONFIG_TASKS_cache_expire_seconds">#&nbsp;&nbsp</a>
 
-        <span class="name">CONFIG_GLOBAL_TAGS_refresh_interval_setter</span>
+        <span class="name">CONFIG_TASKS_cache_expire_seconds</span>
     </div>
 
     
-    
+            <div class="docstring"><p>this property sets the time in seconds that the cache will be called instead of remote</p>
+
+<p>default is 0, meaning that the client by default will fetch from api every time</p>
+
+<p>is only valid for tasks</p>
+</div>
+
 
                             </div>
                             <div id="HabiClient.STAT_rate_limit_remaining" class="classattr">

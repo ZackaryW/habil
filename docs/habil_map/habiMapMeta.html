@@ -64,6 +64,9 @@
                                 <a class="function" href="#HabiMapMeta.get_log">get_log</a>
                         </li>
                         <li>
+                                <a class="function" href="#HabiMapMeta.get_caller_func_log">get_caller_func_log</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#HabiMapMeta.get_last_log">get_last_log</a>
                         </li>
                 </ul>
@@ -100,7 +103,7 @@
     <span class="n">RATE_LIMIT_REMAINING</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">LOGS</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">MAX_HOLD_LOGS</span> <span class="o">=</span> <span class="mi">50</span>
-
+    
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse_rate_limit_state</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">res</span><span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">):</span>
         <span class="n">chances_remain</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;X-RateLimit-Remaining&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -133,8 +136,8 @@
             <span class="k">raise</span> <span class="n">HabiRequestRateLimited</span><span class="p">(</span><span class="s2">&quot;Rate Limited, wait until </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">RATE_LIMIT</span><span class="p">))</span>
         
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_log</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">res</span> <span class="p">:</span> <span class="n">HabiMapResponse</span><span class="p">,</span> <span class="n">caller_func</span> <span class="p">):</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">caller_func</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="n">res</span>
+    <span class="k">def</span> <span class="nf">_log</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">res</span> <span class="p">:</span> <span class="n">HabiMapResponse</span> <span class="p">):</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">[</span><span class="n">res</span><span class="o">.</span><span class="n">unix_timestamp</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span>
         <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">cls</span><span class="o">.</span><span class="n">MAX_HOLD_LOGS</span><span class="p">:</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
@@ -143,17 +146,32 @@
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_log</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">caller</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">caller</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_log</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">caller</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">[</span><span class="n">caller</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">[</span><span class="n">timestamp</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">caller</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">caller</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">caller</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timestamp</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">val</span>
             <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
                 <span class="k">return</span> <span class="n">val</span>
     
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_caller_func_log</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">caller_func</span><span class="p">,</span> <span class="n">multiple</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">val</span> <span class="p">:</span> <span class="n">HabiMapResponse</span>
+            <span class="k">if</span> <span class="n">val</span><span class="o">.</span><span class="n">caller_func</span> <span class="o">==</span> <span class="n">caller_func</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">multiple</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">val</span>
+            <span class="k">if</span> <span class="n">caller_func</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">caller_func</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">multiple</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">exact</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">val</span>
+            <span class="k">if</span> <span class="n">caller_func</span> <span class="o">==</span> <span class="n">val</span><span class="o">.</span><span class="n">caller_func</span> <span class="ow">and</span> <span class="n">multiple</span> <span class="ow">and</span> <span class="n">exact</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">caller_func</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">caller_func</span> <span class="ow">and</span> <span class="n">multiple</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">exact</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_last_log</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -182,7 +200,7 @@
     <span class="n">RATE_LIMIT_REMAINING</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">LOGS</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">MAX_HOLD_LOGS</span> <span class="o">=</span> <span class="mi">50</span>
-
+    
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse_rate_limit_state</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">res</span><span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">):</span>
         <span class="n">chances_remain</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;X-RateLimit-Remaining&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -215,8 +233,8 @@
             <span class="k">raise</span> <span class="n">HabiRequestRateLimited</span><span class="p">(</span><span class="s2">&quot;Rate Limited, wait until </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">RATE_LIMIT</span><span class="p">))</span>
         
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_log</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">res</span> <span class="p">:</span> <span class="n">HabiMapResponse</span><span class="p">,</span> <span class="n">caller_func</span> <span class="p">):</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">caller_func</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="n">res</span>
+    <span class="k">def</span> <span class="nf">_log</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">res</span> <span class="p">:</span> <span class="n">HabiMapResponse</span> <span class="p">):</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">[</span><span class="n">res</span><span class="o">.</span><span class="n">unix_timestamp</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span>
         <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">cls</span><span class="o">.</span><span class="n">MAX_HOLD_LOGS</span><span class="p">:</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
@@ -225,17 +243,32 @@
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_log</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">caller</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">caller</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_log</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">caller</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">[</span><span class="n">caller</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">[</span><span class="n">timestamp</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">caller</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">caller</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">caller</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timestamp</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">val</span>
             <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
                 <span class="k">return</span> <span class="n">val</span>
     
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_caller_func_log</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">caller_func</span><span class="p">,</span> <span class="n">multiple</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">val</span> <span class="p">:</span> <span class="n">HabiMapResponse</span>
+            <span class="k">if</span> <span class="n">val</span><span class="o">.</span><span class="n">caller_func</span> <span class="o">==</span> <span class="n">caller_func</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">multiple</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">val</span>
+            <span class="k">if</span> <span class="n">caller_func</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">caller_func</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">multiple</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">exact</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">val</span>
+            <span class="k">if</span> <span class="n">caller_func</span> <span class="o">==</span> <span class="n">val</span><span class="o">.</span><span class="n">caller_func</span> <span class="ow">and</span> <span class="n">multiple</span> <span class="ow">and</span> <span class="n">exact</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">caller_func</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">caller_func</span> <span class="ow">and</span> <span class="n">multiple</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">exact</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_last_log</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -401,22 +434,54 @@
                 <div class="decorator">@classmethod</div>
 
             <span class="def">def</span>
-            <span class="name">get_log</span><span class="signature">(cls, caller: str = None, **kwargs)</span>:
+            <span class="name">get_log</span><span class="signature">(cls, timestamp, **kwargs)</span>:
     </div>
 
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_log</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">caller</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">caller</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_log</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">caller</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">[</span><span class="n">caller</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="p">[</span><span class="n">timestamp</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">caller</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">caller</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">caller</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timestamp</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">val</span>
             <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
                 <span class="k">return</span> <span class="n">val</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            </div>
+                            <div id="HabiMapMeta.get_caller_func_log" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#HabiMapMeta.get_caller_func_log">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@classmethod</div>
+
+            <span class="def">def</span>
+            <span class="name">get_caller_func_log</span><span class="signature">(cls, caller_func, multiple: bool = False, exact: bool = False)</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_caller_func_log</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">caller_func</span><span class="p">,</span> <span class="n">multiple</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOGS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">val</span> <span class="p">:</span> <span class="n">HabiMapResponse</span>
+            <span class="k">if</span> <span class="n">val</span><span class="o">.</span><span class="n">caller_func</span> <span class="o">==</span> <span class="n">caller_func</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">multiple</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">val</span>
+            <span class="k">if</span> <span class="n">caller_func</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">caller_func</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">multiple</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">exact</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">val</span>
+            <span class="k">if</span> <span class="n">caller_func</span> <span class="o">==</span> <span class="n">val</span><span class="o">.</span><span class="n">caller_func</span> <span class="ow">and</span> <span class="n">multiple</span> <span class="ow">and</span> <span class="n">exact</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">caller_func</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">caller_func</span> <span class="ow">and</span> <span class="n">multiple</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">exact</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
 </pre></div>
 
         </details>
