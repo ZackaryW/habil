@@ -3,6 +3,7 @@ from abc import abstractmethod
 from dataclasses import dataclass
 import dataclasses
 from datetime import datetime
+from types import MappingProxyType
 import typing
 
 class HabiUMeta(type):
@@ -45,6 +46,37 @@ class HabiUMeta(type):
             if throw: raise TypeError("No instance of {} with id {}".format(cls, id))
             return
         del cls._instances[cls][id]
+
+    def cached(cls):
+        if cls not in cls._instances:
+            return {}
+
+        return MappingProxyType(cls._instances[cls])
+    
+    def yield_all(cls):
+        if cls not in cls._instances:
+            return
+        for i in cls._instances[cls].values():
+            yield i
+    
+    def get_all(cls):
+        if cls not in cls._instances:
+            return []
+        return list(cls._instances[cls].values())
+
+    def yield_by_userid(cls, userid):
+        if cls not in cls._instances:
+            return
+        for i in cls._instances[cls].values():
+            if not hasattr(i, "userId"):
+                continue
+            if i.userId == userid:
+                yield i
+
+    def get_by_userid(cls, userid):
+        if cls not in cls._instances:
+            return []
+        return [i for i in cls._instances[cls].values() if hasattr(i, "userId") and i.userId == userid]
 
 @dataclass(frozen=True)
 class HabiUItem(metaclass=HabiUMeta):
