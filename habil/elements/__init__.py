@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from habil.other.subtasks import HabiSubTask
 from habil.sub.tag import HabiTag
 from habil_base.exceptions import HabiRequestException
 from habil_base.habiUItem import HabiUItem
@@ -8,6 +9,7 @@ import typing
 
 @dataclass(frozen=True)
 class AHabiTask(HabiUItem):
+    userId : str
     createdAt : str
     updatedAt : str
     text : str
@@ -88,11 +90,15 @@ class AHabiTask(HabiUItem):
 @dataclass(frozen=True)
 class CompletableTask(AHabiTask):
     completed : bool
-    checklist : typing.List[str]
+    checklist : typing.Tuple[HabiSubTask]
 
     def __post_init__(self):
         super().__post_init__()
-        pass
+        checklists = []
+        for checklist in self.checklist:
+            checklists.append(HabiSubTask(**checklist, userId=self.userId))
+
+        object.__setattr__(self, "checklist", tuple(checklists))
 
     @token_required()
     def complete(self, revert: bool = False, token=None) -> 'CompletableTask':
