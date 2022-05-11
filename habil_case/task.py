@@ -14,6 +14,10 @@ delete_a_tag_from_a_task = HabiMapCase.delete_case(
     "https://habitica.com/api/v3/tasks/{taskId}/tags/{tagId}",
 )
 
+delete_a_checklist_item_from_task = HabiMapCase.delete_case(
+    "https://habitica.com/api/v3/tasks/{taskId}/checklist/{checklistId}",
+)
+
 delete_a_task = HabiMapCase.delete_case(
     "https://habitica.com/api/v3/tasks/{taskId}",
 )

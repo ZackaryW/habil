@@ -97,7 +97,7 @@ class CompletableTask(AHabiTask):
         super().__post_init__()
         checklists = []
         for checklist in self.checklist:
-            checklists.append(HabiSubTask(**checklist, userId=self.userId))
+            checklists.append(HabiSubTask(**checklist, userId=self.userId, taskId=self.id))
 
         object.__setattr__(self, "checklist", tuple(checklists))
 
