@@ -6,6 +6,7 @@ from habil_base.habiUItem import HabiUItem
 import habil_case
 from habil_base import HabiTokenMeta
 import typing
+from habil.other.profile import HabiStatBox
 
 @dataclass(frozen=True)
 class AHabiTask(HabiUItem):
@@ -105,4 +106,19 @@ class CompletableTask(AHabiTask):
         if not isinstance(revert, bool):
             raise TypeError("revert must be bool")
 
+        res = habil_case.task.score_a_task(taskId=self.id, direction="up" if not revert else "down")
+        if not res.success:
+            raise HabiRequestException(res)
         
+        statbox = HabiStatBox.from_res(res)
+        task = self.__class__.get(id=self.id)
+        return task, statbox
+
+    # ANCHOR checklist
+    @HabiTokenMeta.acquire_token()
+    def add_checklist_item(self, text: str, completed : bool = False, token=None) -> 'CompletableTask':
+        res = habil_case.task.add_a_checklist_item_to_task(headers=token, taskId=self.id, text=text, completed=completed)
+        if not res.success:
+            raise HabiRequestException(res)
+
+        return self.from_res(res)
