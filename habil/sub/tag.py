@@ -63,7 +63,8 @@ class HabiTag(HabiSubElement):
             return MappingProxyType(cls._instances[cls])
 
         res = habil_case.tag.get_a_users_tags(
-            headers=token
+            headers=token,
+            caller_func="HabiTag.get_all"
         )
         
         if not res.success:

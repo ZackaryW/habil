@@ -51,7 +51,7 @@ class HabiTasking:
     @classmethod
     @HabiTokenMeta.acquire_token()
     def get(cls, id : str, token=None) -> typing.Union[HabiDaily, HabiHabit, HabiReward, HabiTodo ,None]:
-        task_res = habil_case.task.get_a_task(headers=token, taskId=id)
+        task_res = habil_case.task.get_a_task(headers=token, taskId=id, caller_func="HabiTasking.get")
         if not task_res.success:
             return None
         return cls._from_res(task_res)
@@ -59,7 +59,7 @@ class HabiTasking:
     @classmethod
     @HabiTokenMeta.acquire_token()
     def get_all(cls, token=None) -> typing.List[typing.Union[HabiDaily, HabiHabit, HabiReward, HabiTodo]]:
-        tasks_res = habil_case.task.get_users_tasks(headers=token)
+        tasks_res = habil_case.task.get_users_tasks(headers=token, caller_func="HabiTasking.get_all")
         if not tasks_res.success:
             return []
 
