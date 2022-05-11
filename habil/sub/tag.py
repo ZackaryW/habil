@@ -22,6 +22,14 @@ class HabiTagMeta:
 
 @dataclass(frozen=True)
 class HabiTag(HabiSubElement):
+    def delete(self) -> None:
+        res = habil_case.tag.delete_a_user_tag(self.id)
+        if res.fail:
+            raise HabiRequestException(res)
+
+        self.__class__.deleteins(self.id)
+
+
     @classmethod
     @HabiTokenMeta.acquire_token()
     def create(cls, name:str, token=None):
