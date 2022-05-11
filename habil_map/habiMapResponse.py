@@ -37,10 +37,12 @@ class HabiMapResponse(FrozenClass):
     status_code : int = None
     
     def __init__(self, 
+        caller_func : str,
         raw : requests.Response,
         ret_params : typing.Dict[str, HabiMapReturnParam] = None,
         extract_data : bool = True,
     ) -> None:
+        self.caller_func = caller_func
         self.raw = raw
         self.url = raw.url
         self.reason = raw.reason
@@ -175,5 +177,10 @@ class HabiMapResponse(FrozenClass):
         return int(self.timestamp.timestamp()*1000)
 
     @classmethod
-    def parse(cls, raw_response : requests.Response,ret_params : dict,  extract_data : bool = True) -> 'HabiMapResponse':
-        return cls(raw_response, ret_params, extract_data)
+    def parse(cls,caller_func:str, raw_response : requests.Response,ret_params : dict,  extract_data : bool = True) -> 'HabiMapResponse':
+        return cls(
+            caller_func=caller_func,
+            raw=raw_response,
+            ret_params=ret_params, 
+            extract_data=extract_data,
+        )

@@ -10,7 +10,7 @@ class HabiMapMeta:
     RATE_LIMIT_REMAINING = None
     LOGS = {}
     MAX_HOLD_LOGS = 50
-
+    
     @classmethod
     def parse_rate_limit_state(cls, res: requests.Response):
         chances_remain = res.headers.get("X-RateLimit-Remaining", None)
@@ -43,8 +43,8 @@ class HabiMapMeta:
             raise HabiRequestRateLimited("Rate Limited, wait until {}".format(cls.RATE_LIMIT))
         
     @classmethod
-    def _log(cls, res : HabiMapResponse, caller_func ):
-        cls.LOGS[str(caller_func).lower()] = res
+    def _log(cls, res : HabiMapResponse ):
+        cls.LOGS[res.unix_timestamp] = res
         while len(cls.LOGS) > cls.MAX_HOLD_LOGS:
             cls.LOGS.popitem(last=False)
 
@@ -53,17 +53,32 @@ class HabiMapMeta:
         return cls.LOGS
 
     @classmethod
-    def get_log(cls, caller:str =None,**kwargs):
-        if caller is None:
+    def get_log(cls, timestamp, **kwargs):
+        if timestamp is None:
             return None
-        if caller in cls.LOGS:
-            return cls.LOGS[caller]
+        if timestamp in cls.LOGS:
+            return cls.LOGS[timestamp]
         for key, val in cls.LOGS.items():
-            if caller is not None and isinstance(caller, str) and str(caller).lower() in key:
+            if timestamp is not None and isinstance(timestamp, int):
                 return val
             if any(getattr(val, k, None) == v for k, v in kwargs.items()):
                 return val
     
+    @classmethod
+    def get_caller_func_log(cls, caller_func, multiple:bool = False, exact:bool = False):
+        ret = []
+        for key, val in cls.LOGS.items():
+            val : HabiMapResponse
+            if val.caller_func == caller_func and not multiple:
+                return val
+            if caller_func in val.caller_func and not multiple and not exact:
+                return val
+            if caller_func == val.caller_func and multiple and exact:
+                ret.append(val)
+            if caller_func in val.caller_func and multiple and not exact:
+                ret.append(val)
+        return ret
+
     @classmethod
     def get_last_log(cls):
         if len(cls.LOGS) == 0:
