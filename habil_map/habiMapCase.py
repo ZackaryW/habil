@@ -163,8 +163,8 @@ class HabiMapCase:
         res : requests.Response = self.request_method(**kwargs)
         HabiMapMeta.parse_rate_limit_state(res)
 
-        hres = HabiMapResponse.parse(res, self.ret_params, extract_data)
-        HabiMapMeta._log(res=hres, caller_func=caller_func)
+        hres = HabiMapResponse.parse(raw_response=res, ret_params=self.ret_params, extract_data=extract_data, caller_func=caller_func)
+        HabiMapMeta._log(res=hres)
         return hres
 
     @classmethod
