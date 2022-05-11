@@ -13,6 +13,14 @@ from habil.tasking import HabiTasking
 from habil_utils import FrozenClass
 from habil_map.habiMapMeta import HabiMapMeta
 
+class HabiClientCategory:
+    TASK = 0
+    TAG = 1
+    REWARD = 2
+    HABIT = 3
+    DAILY = 4
+    TODO = 5
+
 class HabiClient(FrozenClass):
 
     def __init__(self, token : typing.Union[HabiToken, dict] = None):
@@ -27,13 +35,6 @@ class HabiClient(FrozenClass):
         self._last_fetch_timestamp = None
 
         self._freeze()
-
-    TASK = 0
-    TAG = 1
-    REWARD = 2
-    HABIT = 3
-    DAILY = 4
-    TODO = 5
 
     def get(self, category : int, id : str):
         match category:
@@ -78,6 +79,9 @@ class HabiClient(FrozenClass):
 
     @property
     def tasks(self):
+        """
+        Returns a list of all tasks
+        """
         if not self._need_to_fetch():
             return self.tasks_cached
 
@@ -88,6 +92,9 @@ class HabiClient(FrozenClass):
     
     @property
     def tasks_cached(self):
+        """
+        Returns a list of all tasks from cache
+        """
         all_lists =[]
         all_lists.extend(HabiDaily.get_by_userid(userid=self.token.user_id))
         all_lists.extend(HabiHabit.get_by_userid(userid=self.token.user_id))
@@ -97,12 +104,18 @@ class HabiClient(FrozenClass):
 
     @property
     def tags(self):
+        """
+        Returns a list of all tags
+        """
         if not self._need_to_fetch():
             return self.tags_cached
         return HabiTag.get_all(token=self.token)
 
     @property
     def tags_cached(self):
+        """
+        Returns a list of all tags from cache
+        """
         return HabiTag.get_by_userid(userid=self.token.user_id)
 
     @property
