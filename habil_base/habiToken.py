@@ -50,7 +50,10 @@ class HabiTokenMeta:
                     pass
                 elif (token:=caller_getattr("token", default=None, deep=dig_deep)) is not None:
                     pass
-                
+                elif HabiTokenMeta.ROOT is not None:
+                    token = HabiTokenMeta.ROOT
+
+
                 # finally
                 if token is None:
                     logging.warning("No token found")
