@@ -4,6 +4,12 @@ add_a_tag_to_a_task = HabiMapCase.post_case(
     "https://habitica.com/api/v3/tasks/{taskId}/tags/{tagId}",
 )
 
+add_a_checklist_item_to_task = HabiMapCase.post_case(
+    "https://habitica.com/api/v3/tasks/{taskId}/checklist",
+    Body(name="text", xtype=str),
+    Body(name="completed", xtype=bool, default=False, optional=True),
+)
+
 delete_a_tag_from_a_task = HabiMapCase.delete_case(
     "https://habitica.com/api/v3/tasks/{taskId}/tags/{tagId}",
 )
