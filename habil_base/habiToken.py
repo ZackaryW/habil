@@ -72,11 +72,6 @@ class HabiTokenMeta:
         return decorator
 
 
-
-               
-
-
-
 @dataclass(frozen=True)
 class HabiToken:
     user_id : str
@@ -137,37 +132,3 @@ class HabiToken:
         with open(jsonpath, 'r') as f:
             data = json.load(f)
         return cls.from_dict(data=data, set_root=set_root)
-
-
-def acquire_(glob :bool = True, dig:bool = True, dig_deep:bool = False, throw : bool = False) -> callable:
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            if "token" in kwargs and isinstance(kwargs["token"], HabiToken):
-                kwargs["token"] = kwargs["token"].headers
-                return func(*args, **kwargs)
-            elif "token" in kwargs and isinstance(kwargs["token"], dict):
-                return func(*args, **kwargs)
-            elif not glob and not dig:
-                raise ValueError("token is required")
-
-            if dig and (token:=caller_getattr("token", default=None, deep=dig_deep)) is not None:
-                if isinstance(token, HabiToken):
-                    token = token.headers
-                kwargs["token"] = token
-                return func(*args, **kwargs)
-
-            if glob:
-                global _SINGLETON_INSTANCE
-                if _SINGLETON_INSTANCE is not None:
-                    kwargs["token"] = _SINGLETON_INSTANCE.headers
-                    return func(*args, **kwargs)
-            
-            logging.debug("missing token")
-            if throw:
-                raise HabiMissingTokenException("token is required [HabiTokenMeta]")
-
-            return func(*args, **kwargs)
-                
-        return wrapper
-    return decorator
