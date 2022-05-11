@@ -1,6 +1,6 @@
 import inspect
 import typing
-from habil_base.habiToken import token_required
+from habil_base.habiToken import HabiTokenMeta
 from habil_utils import FrozenClass, get_simple_caller_name, get_caller_class
 from habil import HabiDaily
 import re
@@ -18,7 +18,7 @@ class CounterDaily(FrozenClass):
         self.max = max
         self.current = current
 
-    @token_required()
+    @HabiTokenMeta.acquire_token()
     def complete(self, count: int=1, token=None) -> None:
         self.current += count
         done = False
@@ -35,12 +35,12 @@ class CounterDaily(FrozenClass):
         daily = daily.update(text=f"{self.text} [{self.current}/{self.max}]", token=token, caller_func="habil_ext.counterDaily.CounterDaily.complete")
         return
 
-    @token_required()
+    @HabiTokenMeta.acquire_token()
     def daily(self, token=None) -> HabiDaily:
         return HabiDaily.get(id=self.id, token=token)
 
     @classmethod
-    @token_required()
+    @HabiTokenMeta.acquire_token()
     def overload(cls, daily: HabiDaily, reset:bool = False, max:int =None, current : int = 0, token= None) -> typing.Union["CounterDaily", HabiDaily]:
         if not isinstance(daily, HabiDaily):
             raise ValueError("daily must be a HabiDaily")

@@ -13,7 +13,7 @@ from habil_map.habiMapMeta import HabiMapMeta
 class t_case_base(tests.base_case):
     def setUp(self) -> None:
         self.case_res = None
-        self.token = HabiToken.from_json("config.json", set_global=True)
+        self.token = HabiToken.from_json("config.json", set_root=True)
 
     def tearDown(self) -> None:
         if self.case_res is not None:

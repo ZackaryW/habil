@@ -14,11 +14,11 @@ class HabiClient(FrozenClass):
 
     def __init__(self, token : typing.Union[HabiToken, dict] = None):
         if token is None:
-            token = HabiToken.get_global()
+            token = HabiToken.get_root()
         
         if token is None:
             raise HabiMissingTokenException("No token found")
-
+            
         self.token : HabiToken = token
         self._freeze()
 
@@ -44,8 +44,8 @@ class HabiClient(FrozenClass):
     
     # ANCHOR classmethods
     @classmethod
-    def login(cls, username : str, password : str, appid : str=None, set_global : bool = False) -> 'HabiClient':
-        token = HabiToken.login(username=username, password=password, appid=appid, set_global=set_global)
+    def login(cls, username : str, password : str, appid : str=None, set_root : bool = False) -> 'HabiClient':
+        token = HabiToken.login(username=username, password=password, appid=appid, set_root=set_root)
         return cls(token=token)
 
     @classmethod

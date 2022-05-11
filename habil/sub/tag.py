@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from types import MappingProxyType
 from habil_base.exceptions import HabiLocalNotFoundException, HabiRequestException
 from habil.sub import HabiSubElement
-from habil_base.habiToken import token_required
+from habil_base.habiToken import HabiTokenMeta
 import habil_case
 
 class HabiTagMeta:
@@ -23,7 +23,7 @@ class HabiTagMeta:
 @dataclass(frozen=True)
 class HabiTag(HabiSubElement):
     @classmethod
-    @token_required()
+    @HabiTokenMeta.acquire_token()
     def create(cls, name:str, token=None):
         res = habil_case.tag.create_new_tag(name=name, headers=token)
         if res.fail:
@@ -34,7 +34,7 @@ class HabiTag(HabiSubElement):
         )
 
     @classmethod
-    @token_required(dig_deep=True)
+    @HabiTokenMeta.acquire_token()
     def get(cls, id: str, token=None, force_pull : bool = False) -> 'HabiSubElement':
         if HabiTagMeta.is_time_to_pull():
             force_pull = True
@@ -51,7 +51,7 @@ class HabiTag(HabiSubElement):
     
 
     @classmethod
-    @token_required(dig_deep=True)
+    @HabiTokenMeta.acquire_token()
     def get_all(cls, token=None, force_pull : bool = True) -> list:
         if HabiTagMeta.is_time_to_pull():
             force_pull = True

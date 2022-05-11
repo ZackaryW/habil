@@ -3,7 +3,7 @@ from habil.elements.daily import HabiDaily
 from habil.elements.habit import HabiHabit
 from habil.elements.reward import HabiReward
 from habil.elements.todo import HabiTodo
-from habil_base.habiToken import token_required
+from habil_base.habiToken import HabiTokenMeta
 import habil_case
 from habil_map.habiMapResponse import HabiMapResponse
 
@@ -49,7 +49,7 @@ class HabiTasking:
             return type_.from_res(data)
 
     @classmethod
-    @token_required()
+    @HabiTokenMeta.acquire_token()
     def get(cls, id : str, token=None) -> typing.Union[HabiDaily, HabiHabit, HabiReward, HabiTodo ,None]:
         task_res = habil_case.task.get_a_task(headers=token, taskId=id)
         if not task_res.success:
@@ -57,7 +57,7 @@ class HabiTasking:
         return cls._from_res(task_res)
 
     @classmethod
-    @token_required()
+    @HabiTokenMeta.acquire_token()
     def get_all(cls, token=None) -> typing.List[typing.Union[HabiDaily, HabiHabit, HabiReward, HabiTodo]]:
         tasks_res = habil_case.task.get_users_tasks(headers=token)
         if not tasks_res.success:

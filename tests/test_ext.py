@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
 
 class t_ext(unittest.TestCase):
     def setUp(self) -> None:
-        HabiToken.from_json("config.json", set_global=True)
+        HabiToken.from_json("config.json", set_root=True)
         from zxutil.bridge import Bridge
         bridge= Bridge("config.json")
         self.test_daily = bridge.test_daily

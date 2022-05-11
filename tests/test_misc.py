@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
 
 class t_map_cases(unittest.TestCase):
     def setUp(self) -> None:
-        HabiToken.from_json("config.json", set_global=True)
+        HabiToken.from_json("config.json", set_root=True)
 
     def test_rate_limit(self):
         """

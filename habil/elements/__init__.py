@@ -4,7 +4,7 @@ from habil.sub.tag import HabiTag
 from habil_base.exceptions import HabiRequestException
 from habil_base.habiUItem import HabiUItem
 import habil_case
-from habil_base import token_required
+from habil_base import HabiTokenMeta
 import typing
 
 @dataclass(frozen=True)
@@ -31,7 +31,7 @@ class AHabiTask(HabiUItem):
 
 
     @classmethod
-    @token_required()
+    @HabiTokenMeta.acquire_token()
     def get(cls, id : str, token=None, **kwargs):
         res = habil_case.task.get_a_task(headers=token, taskId=id, **kwargs)
         if not res.success:
@@ -40,7 +40,7 @@ class AHabiTask(HabiUItem):
             return cls.from_res(res)
         return None
 
-    @token_required()
+    @HabiTokenMeta.acquire_token()
     def update(self, token=None,**kwargs)-> 'AHabiTask':
         res = habil_case.task.update_a_task(headers=token, taskId=self.id, **kwargs)
         if not res.success:
@@ -48,7 +48,7 @@ class AHabiTask(HabiUItem):
         created_obj = self.from_res(res)
         return created_obj
 
-    @token_required()
+    @HabiTokenMeta.acquire_token()
     def delete(self, token=None, **kwargs) -> bool:
         res = habil_case.task.delete_a_task(headers=token, taskId=self.id, **kwargs)
         if not res.success:
@@ -57,7 +57,7 @@ class AHabiTask(HabiUItem):
         self.__class__.deleteins(self.id)
         return True
 
-    @token_required()
+    @HabiTokenMeta.acquire_token()
     def score_task(self,score: bool = True, token=None, **kwargs):
         res = habil_case.task.score_a_task(headers=token, taskId=self.id, direction="up" if score else "down", **kwargs)
         if not res.success:
@@ -72,14 +72,14 @@ class AHabiTask(HabiUItem):
                 return True
         return False
 
-    @token_required()
+    @HabiTokenMeta.acquire_token()
     def add_tag(self, tag: HabiTag, token=None) -> 'AHabiTask':
         res = habil_case.task.add_a_tag_to_a_task(headers=token, taskId=self.id, tagId=tag.id)
         if res.fail:
             raise HabiRequestException(res)
         return self.from_res(res)
 
-    @token_required()
+    @HabiTokenMeta.acquire_token()
     def remove_tag(self, tag: HabiTag, token=None) -> 'AHabiTask':
         res = habil_case.task.delete_a_tag_from_a_task(headers=token, taskId=self.id, tagId=tag.id)
         if res.fail:
@@ -100,7 +100,7 @@ class CompletableTask(AHabiTask):
 
         object.__setattr__(self, "checklist", tuple(checklists))
 
-    @token_required()
+    @HabiTokenMeta.acquire_token()
     def complete(self, revert: bool = False, token=None) -> 'CompletableTask':
         if not isinstance(revert, bool):
             raise TypeError("revert must be bool")

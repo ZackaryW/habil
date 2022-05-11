@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import logging
 import uuid
-from habil_base.habiToken import token_required
+from habil_base.habiToken import HabiTokenMeta
 from habil_base.habiUItem import HabiUItem
 import habil_case
 from habil_base.exceptions import HabiRequestException
@@ -19,7 +19,7 @@ class HabiStatBox(HabiUItem):
     inte : int
 
     @classmethod
-    @token_required(throw=True)
+    @HabiTokenMeta.acquire_token(throw_on_missing=True)
     def get(cls, token=None):
         res = habil_case.user.get_user_profile_stats(headers=token, caller_func="HabiStatBox.get")
         if res.fail:
@@ -27,7 +27,7 @@ class HabiStatBox(HabiUItem):
         token : dict
         return cls.from_dict(**res.repo, id=token.get("x-api-user"))
 
-    @token_required(throw=True)
+    @HabiTokenMeta.acquire_token(throw_on_missing=True)
     def update(self,
         lvl : int = None,
         exp : int = None,
@@ -60,7 +60,7 @@ class HabiProfile(HabiUItem):
     stats : HabiStatBox
 
     @classmethod
-    @token_required()
+    @HabiTokenMeta.acquire_token()
     def get(cls, token=None):
         res = habil_case.user.get_user_profile(headers=token, caller_func="HabiProfile.get")
         if res.fail:
