@@ -68,15 +68,23 @@ class HabiUMeta(type):
         if cls not in cls._instances:
             return
         for i in cls._instances[cls].values():
-            if not hasattr(i, "userId"):
-                continue
-            if i.userId == userid:
+            if not hasattr(i, "userId") and i.id == userid:
+                yield i
+            elif i.userId == userid:
                 yield i
 
     def get_by_userid(cls, userid):
         if cls not in cls._instances:
             return []
-        return [i for i in cls._instances[cls].values() if hasattr(i, "userId") and i.userId == userid]
+
+        ret =[]
+        for i in cls._instances[cls].values():
+            if not hasattr(i, "userId") and i.id == userid:
+                ret.append(i)
+            elif i.userId == userid:
+                ret.append(i)
+
+        return ret
 
 @dataclass(frozen=True)
 class HabiUItem(metaclass=HabiUMeta):
