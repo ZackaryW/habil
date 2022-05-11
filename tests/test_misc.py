@@ -14,6 +14,10 @@ class t_map_cases(unittest.TestCase):
     def setUp(self) -> None:
         HabiToken.from_json("config.json", set_root=True)
 
+    def tearDown(self) -> None:
+        print("==============================")
+        print(HabiMapMeta.RATE_LIMIT_REMAINING)
+
     def test_rate_limit(self):
         """
         do not use this test too often
@@ -50,7 +54,7 @@ class t_map_cases(unittest.TestCase):
         bridge= Bridge("config.json")
         habit = HabiHabit.get(id=bridge.test_habit)
         print(repr(habit))
-        pprint(HabiHabit.get_raw(item=habit.id).json_data)
+        pprint(HabiMapMeta.get_last_log().data)
 
         if habit.up:
             habit = habit.good_habit(False)
@@ -58,14 +62,14 @@ class t_map_cases(unittest.TestCase):
             habit = habit.good_habit(True)
 
         print(repr(habit))
-        pprint(HabiMapMeta.get_log(caller="good_habit"))
+        pprint(HabiMapMeta.get_caller_func_log("good_habit"))
 
     def test_score_task(self):
         from habil import HabiTasking
         from zxutil.bridge import Bridge
         bridge= Bridge("config.json")
         habit = HabiTasking.get(id=bridge.test_habit)
-        pprint(HabiHabit.get_raw(item=habit.id).json_data)
+        pprint(HabiMapMeta.get_last_log().json_data)
         habit = habit.score_task(True)
         print("______________________________")
-        pprint(HabiHabit.get_raw(item=habit.id).json_data)
+        pprint(HabiMapMeta.get_last_log().json_data)
